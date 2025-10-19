@@ -256,7 +256,7 @@
     <!-- Map initialization script -->
     <script>
         window.azureMapsConfig = {
-            clientId: '@Model.AzureMapsClientId',
+            subscriptionKey: '@Model.AzureMapsSubscriptionKey',
             reports: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentReports.Select(r => new {
                 id = r.Id,
                 location = r.Location,

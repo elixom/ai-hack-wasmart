@@ -44,7 +44,7 @@ public class HomeController : Controller
             TotalReports = userReports.Count(),
             PendingReports = userReports.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Reported),
             CollectedReports = userReports.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Collected),
-            AzureMapsClientId = _mapsService.GetClientId()
+            AzureMapsSubscriptionKey = _mapsService.GetSubscriptionKey()
         };
 
         return View(viewModel);

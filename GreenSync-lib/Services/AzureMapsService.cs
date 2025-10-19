@@ -1,96 +1,56 @@
-
-using Azure.Core.GeoJson;
-using Azure.Identity;
-using Azure.Maps.Search;
-using Azure.Maps.Search.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace GreenSync.Lib.Services;
 
 /// <summary>
-/// Service for Azure Maps operations using Microsoft Entra authentication
+/// Service for Azure Maps operations using subscription key authentication
 /// </summary>
 public class AzureMapsService : IMapsService
 {
-    private readonly MapsSearchClient _searchClient;
-    private readonly string _clientId;
+    private readonly string _subscriptionKey;
     private readonly ILogger<AzureMapsService> _logger;
 
     public AzureMapsService(IConfiguration configuration, ILogger<AzureMapsService> logger)
     {
         _logger = logger;
-        _clientId = configuration["AzureMaps:ClientId"] ?? throw new InvalidOperationException("Azure Maps ClientId not configured");
+        _subscriptionKey = configuration["AzureMaps:SubscriptionKey"] ?? string.Empty;
 
-        // Use DefaultAzureCredential for Microsoft Entra authentication
-        // This will use environment variables: AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID
-        var credential = new DefaultAzureCredential();
-        _searchClient = new MapsSearchClient(credential, _clientId);
-
-        _logger.LogInformation("Azure Maps service initialized with Microsoft Entra authentication");
+        if (!string.IsNullOrEmpty(_subscriptionKey))
+        {
+            _logger.LogInformation("Azure Maps service initialized with subscription key authentication");
+        }
+        else
+        {
+            _logger.LogWarning("Azure Maps subscription key not configured. Map features will be limited.");
+        }
     }
 
     /// <summary>
     /// Get coordinates for a given address (Geocoding)
+    /// Note: This method is a placeholder. Geocoding functionality requires Azure Maps REST API calls.
     /// </summary>
-    public async Task<GeocodingResponse?> GetCoordinatesAsync(string address)
+    public async Task<object?> GetCoordinatesAsync(string address)
     {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(address))
-            {
-                _logger.LogWarning("Attempted to geocode empty address");
-                return null;
-            }
-
-            Response<GeocodingResponse> result = await _searchClient.GetGeocodingAsync(address);
-            
-            if (result?.Value?.Features?.Count > 0)
-            {
-                _logger.LogInformation("Successfully geocoded address: {Address}", address);
-                return result.Value;
-            }
-
-            _logger.LogWarning("No results found for address: {Address}", address);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error geocoding address: {Address}", address);
-            return null;
-        }
+        _logger.LogWarning("Geocoding functionality not yet implemented");
+        return await Task.FromResult<object?>(null);
     }
 
     /// <summary>
     /// Get address for given coordinates (Reverse Geocoding)
+    /// Note: This method is a placeholder. Reverse geocoding functionality requires Azure Maps REST API calls.
     /// </summary>
-    public async Task<GeocodingResponse?> GetAddressAsync(GeoPosition coordinates)
+    public async Task<object?> GetAddressAsync(object coordinates)
     {
-        try
-        {
-            Response<GeocodingResponse> result = await _searchClient.GetReverseGeocodingAsync(coordinates);
-            
-            if (result?.Value?.Features?.Count > 0)
-            {
-                _logger.LogInformation("Successfully reverse geocoded coordinates: {Coordinates}", coordinates);
-                return result.Value;
-            }
-
-            _logger.LogWarning("No address found for coordinates: {Coordinates}", coordinates);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error reverse geocoding coordinates: {Coordinates}", coordinates);
-            return null;
-        }
+        _logger.LogWarning("Reverse geocoding functionality not yet implemented");
+        return await Task.FromResult<object?>(null);
     }
 
     /// <summary>
-    /// Get the Azure Maps client ID for frontend map rendering
+    /// Get the Azure Maps subscription key for frontend map rendering
     /// </summary>
-    public string GetClientId()
+    public string GetSubscriptionKey()
     {
-        return _clientId;
+        return _subscriptionKey;
     }
 }

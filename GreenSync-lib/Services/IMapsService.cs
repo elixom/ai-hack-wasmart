@@ -1,6 +1,3 @@
-using Azure.Maps.Search.Models;
-using Azure.Core.GeoJson;
-
 namespace GreenSync.Lib.Services;
 
 /// <summary>
@@ -12,19 +9,19 @@ public interface IMapsService
     /// Get coordinates for a given address
     /// </summary>
     /// <param name="address">The address to geocode</param>
-    /// <returns>GeocodingResponse with coordinate information</returns>
-    Task<GeocodingResponse?> GetCoordinatesAsync(string address);
+    /// <returns>Geocoding result (placeholder for future implementation)</returns>
+    Task<object?> GetCoordinatesAsync(string address);
 
     /// <summary>
     /// Get address for given coordinates
     /// </summary>
     /// <param name="coordinates">The coordinates to reverse geocode</param>
-    /// <returns>GeocodingResponse with address information</returns>
-    Task<GeocodingResponse?> GetAddressAsync(GeoPosition coordinates);
+    /// <returns>Reverse geocoding result (placeholder for future implementation)</returns>
+    Task<object?> GetAddressAsync(object coordinates);
 
     /// <summary>
-    /// Get the Azure Maps client ID for frontend map rendering
+    /// Get the Azure Maps subscription key for frontend map rendering
     /// </summary>
-    /// <returns>The client ID for Azure Maps</returns>
-    string GetClientId();
+    /// <returns>The subscription key for Azure Maps</returns>
+    string GetSubscriptionKey();
 }

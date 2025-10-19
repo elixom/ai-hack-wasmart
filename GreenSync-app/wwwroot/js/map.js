@@ -9,9 +9,9 @@
 
     function initializeMap() {
         // Check if config is available
-        if (!window.azureMapsConfig || !window.azureMapsConfig.clientId) {
+        if (!window.azureMapsConfig || !window.azureMapsConfig.subscriptionKey) {
             console.error('Azure Maps configuration not found');
-            showMapError('Map configuration is missing');
+            showMapError('Map configuration is missing. Please add your Azure Maps subscription key to appsettings.json');
             return;
         }
 
@@ -22,19 +22,14 @@
         const defaultZoom = 11;
 
         try {
-            // Initialize the map with Microsoft Entra authentication
+            // Initialize the map with subscription key authentication
             const map = new atlas.Map('wasteReportsMap', {
                 center: defaultCenter,
                 zoom: defaultZoom,
                 language: 'en-US',
                 authOptions: {
-                    authType: 'anonymous',
-                    clientId: config.clientId,
-                    getToken: function(resolve, reject) {
-                        // For production, implement proper token retrieval
-                        // This placeholder shows where the authentication token should be provided
-                        reject('Token retrieval not implemented. Please configure Microsoft Entra authentication.');
-                    }
+                    authType: 'subscriptionKey',
+                    subscriptionKey: config.subscriptionKey
                 }
             });
 
