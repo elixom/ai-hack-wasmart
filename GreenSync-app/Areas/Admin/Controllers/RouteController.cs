@@ -6,6 +6,7 @@ using GreenSync_app.Areas.Admin.Models;
 namespace GreenSync_app.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Roles = "Administrator,Supervisor")]
 public class RouteController : Controller
 {
     private readonly IRouteService _routeService;

@@ -22,6 +22,14 @@ public class NotificationController : Controller
     }
 
     /// <summary>
+    /// GET: Admin/Notification
+    /// </summary>
+    public IActionResult Index()
+    {
+        return View("Send");
+    }
+
+    /// <summary>
     /// GET: Admin/Notification/Send
     /// </summary>
     public IActionResult Send()
