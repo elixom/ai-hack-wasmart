@@ -1,5 +1,6 @@
 
 using Azure.Core.GeoJson;
+using Azure;
 using Azure.Identity;
 using Azure.Maps.Search;
 using Azure.Maps.Search.Models;
