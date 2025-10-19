@@ -132,7 +132,7 @@
                                                     break;
                                             }
                                         </td>
-                                        <td>@truck.AssignedDriver.FullName</td>
+                                        <td>@truck?.AssignedDriver.FullName</td>
                                         <td>
                                             <div class="progress" style="height: 20px;">
                                                 <div class="progress-bar @(truck.FuelLevel > 50 ? "bg-success" : truck.FuelLevel > 25 ? "bg-warning" : "bg-danger")" 
