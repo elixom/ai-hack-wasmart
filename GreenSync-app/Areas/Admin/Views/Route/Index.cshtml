@@ -118,9 +118,9 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (!string.IsNullOrEmpty(route.AssignedTruckId))
+                                                @if (route.AssignedVehicleId.HasValue)
                                                 {
-                                                    <span class="badge bg-secondary">@route.AssignedTruckId</span>
+                                                    <span class="badge bg-secondary">@route.AssignedVehicleId</span>
                                                 }
                                                 else
                                                 {

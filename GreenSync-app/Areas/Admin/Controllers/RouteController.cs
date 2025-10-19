@@ -11,12 +11,15 @@ public class RouteController : Controller
     private readonly IRouteService _routeService;
     private readonly IReportService _reportService;
     private readonly IAuthService _authService;
+    private readonly IFleetVehicleService _fleetVehicleService;
 
-    public RouteController(IRouteService routeService, IReportService reportService, IAuthService authService)
+
+    public RouteController(IRouteService routeService, IReportService reportService, IAuthService authService, IFleetVehicleService fleetVehicleService)
     {
         _routeService = routeService;
         _reportService = reportService;
         _authService = authService;
+        _fleetVehicleService = fleetVehicleService;
     }
 
     public async Task<IActionResult> Index()
@@ -71,10 +74,16 @@ public class RouteController : Controller
             // Simulate AI-powered route optimization
             var optimizationResult = await _routeService.SimulateRouteOptimizationAsync(reportsToOptimize);
 
+
+            var truck = await _fleetVehicleService.GetAvailableTruck();
             // Assign reports to the optimized route
-            foreach (var reportId in optimizationResult.OptimizedRoute.ReportIds)
+            var ReportIds = optimizationResult.OptimizedRoute.Waypoints.Select(wp => wp.ReportId).ToList();
+            foreach (var reportId in ReportIds)
             {
-                await _reportService.AssignReportToTruckAsync(reportId, "TRUCK001");
+                if (reportId.HasValue)
+                {
+                    await _reportService.AssignReportToTruckAsync(reportId.Value, truck.Id);
+                }
             }
 
             TempData["Success"] = $"Route optimization completed! Simulated {optimizationResult.FuelSavingsPercent}% fuel reduction. {reportsToOptimize.Count} reports assigned to optimized route.";
@@ -105,7 +114,8 @@ public class RouteController : Controller
 
         // Get the reports included in this route
         var routeReports = new List<Report>();
-        foreach (var reportId in route.ReportIds)
+        var ReportIds = route.AssignedReports.Select(wp => wp.Id).ToList();
+        foreach (var reportId in ReportIds)
         {
             var report = await _reportService.GetReportByIdAsync(reportId);
             if (report != null)
@@ -149,7 +159,8 @@ public class RouteController : Controller
 
         // Get the reports included in this route
         var routeReports = new List<Report>();
-        foreach (var reportId in route.ReportIds)
+        var ReportIds = route.AssignedReports.Select(wp => wp.Id).ToList();
+        foreach (var reportId in ReportIds)
         {
             var report = await _reportService.GetReportByIdAsync(reportId);
             if (report != null)

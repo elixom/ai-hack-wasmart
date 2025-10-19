@@ -63,11 +63,11 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 
 // Register our services
-// TODO: Replace with Entity Framework implementations
-builder.Services.AddSingleton<IReportService, InMemoryReportService>();
-builder.Services.AddSingleton<IEcoCreditService, InMemoryEcoCreditService>();
-builder.Services.AddSingleton<IRouteService, InMemoryRouteService>();
-builder.Services.AddScoped<IAuthService, InMemoryAuthService>();
+builder.Services.AddScoped<IReportService, GreenSync.Lib.Services.EntityFramework.EfReportService>();
+builder.Services.AddScoped<IEcoCreditService, GreenSync.Lib.Services.EntityFramework.EfEcoCreditService>();
+builder.Services.AddScoped<IRouteService, GreenSync.Lib.Services.EntityFramework.EfRouteService>();
+builder.Services.AddScoped<IFleetVehicleService, GreenSync.Lib.Services.EntityFramework.EfFleetVehicleService>();
+builder.Services.AddScoped<IAuthService, InMemoryAuthService>(); // TODO: Replace with Identity-based auth service
 builder.Services.AddSingleton<IMapsService, AzureMapsService>();
 builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 

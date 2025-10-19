@@ -10,7 +10,7 @@ public class CreateReportViewModel
     public double Longitude { get; set; }
     public string Description { get; set; } = string.Empty;
     public ReportPriority Priority { get; set; } = ReportPriority.Medium;
-    public double EstimatedVolume { get; set; }
+    public decimal EstimatedVolume { get; set; }
     public WasteType WasteType { get; set; } = WasteType.General;
     
     /// <summary>

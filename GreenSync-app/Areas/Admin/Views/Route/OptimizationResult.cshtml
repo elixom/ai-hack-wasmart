@@ -63,7 +63,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var waypoint in Model.Route.OptimizedPath.OrderBy(w => w.Order))
+                                        @foreach (var waypoint in Model.Route.Waypoints.OrderBy(w => w.StopOrder))
                                         {
                                             <tr class="@(waypoint.Address == "Depot" ? "table-success" : "")">
                                                 <td>
@@ -73,7 +73,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge bg-primary">@waypoint.Order</span>
+                                                        <span class="badge bg-primary">@waypoint.StopOrder</span>
                                                     }
                                                 </td>
                                                 <td>
@@ -230,11 +230,11 @@
                     </h5>
                     <div class="row">
                         <div class="col-md-3">
-                            <h4 class="text-success">@(Math.Round(Model.Route.FuelSavingsMetric * 2.3, 1)) kg</h4>
+                            <h4 class="text-success">@(Math.Round(Model.Route.FuelSavingsMetric * 2.3m, 1)) kg</h4>
                             <small class="text-muted">CO2 Emissions Saved</small>
                         </div>
                         <div class="col-md-3">
-                            <h4 class="text-success">@(Math.Round(Model.Route.TotalDistance * 0.8, 1)) L</h4>
+                            <h4 class="text-success">@(Math.Round(Model.Route.TotalDistance * 0.8m, 1)) L</h4>
                             <small class="text-muted">Fuel Saved</small>
                         </div>
                         <div class="col-md-3">

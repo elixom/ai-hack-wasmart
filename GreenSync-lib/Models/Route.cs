@@ -225,12 +225,17 @@ public class RouteWaypoint
     /// </summary>
     [DisplayName("Is Completed")]
     public bool IsCompleted { get; set; } = false;
-    
+
     /// <summary>
     /// Completion timestamp
     /// </summary>
     [DisplayName("Completed At")]
     public DateTime? CompletedAt { get; set; }
+    /// <summary>
+    /// Completion timestamp
+    /// </summary>
+    [DisplayName("Estimated Arrival At")]
+    public DateTime? EstimatedArrival { get; set; }
 
     // Navigation properties
     /// <summary>

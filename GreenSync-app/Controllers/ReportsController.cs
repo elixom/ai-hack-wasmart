@@ -252,7 +252,7 @@ public class ReportsController : Controller
         report.UserId = existingReport.UserId;
         report.Status = existingReport.Status;
         report.Timestamp = existingReport.Timestamp;
-        report.AssignedTruckId = existingReport.AssignedTruckId;
+        report.AssignedVehicleId = existingReport.AssignedVehicleId;
         report.CollectedAt = existingReport.CollectedAt;
         report.Images = existingReport.Images; // Preserve existing images
 
