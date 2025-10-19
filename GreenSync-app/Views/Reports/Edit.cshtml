@@ -1,0 +1,156 @@
+@model GreenSync.Lib.Models.Report
+@{
+    ViewData["Title"] = "Edit Report";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Reports")">My Reports</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Details", new { id = Model.Id })">Report Details</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                    </ol>
+                </nav>
+                <h2 class="text-success fw-bold">
+                    <i class="bi bi-pencil-square"></i> Edit Report
+                </h2>
+                <p class="text-muted">Update your waste report details</p>
+            </div>
+
+            <!-- Alert if report cannot be edited -->
+            @if (Model.Status != GreenSync.Lib.Models.ReportStatus.Reported)
+            {
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This report has already been @Model.Status.ToString().ToLower() and cannot be edited.
+                    <div class="mt-2">
+                        <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-sm btn-warning">
+                            View Report Details
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Edit Form Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-file-earmark-text"></i> Report Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Edit" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="UserId" />
+                            <input type="hidden" asp-for="Status" />
+                            <input type="hidden" asp-for="Timestamp" />
+
+                            <!-- Location Information -->
+                            <div class="mb-4">
+                                <h6 class="text-success fw-bold mb-3">
+                                    <i class="bi bi-geo-alt"></i> Location Information
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label asp-for="Location" class="form-label">Location <span class="text-danger">*</span></label>
+                                        <input asp-for="Location" class="form-control" placeholder="e.g., Downtown Main Street, Building 5" />
+                                        <span asp-validation-for="Location" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="Latitude" class="form-label">Latitude <span class="text-danger">*</span></label>
+                                        <input asp-for="Latitude" class="form-control" type="number" step="0.000001" />
+                                        <span asp-validation-for="Latitude" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="Longitude" class="form-label">Longitude <span class="text-danger">*</span></label>
+                                        <input asp-for="Longitude" class="form-control" type="number" step="0.000001" />
+                                        <span asp-validation-for="Longitude" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Waste Details -->
+                            <div class="mb-4">
+                                <h6 class="text-success fw-bold mb-3">
+                                    <i class="bi bi-trash"></i> Waste Details
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="WasteType" class="form-label">Waste Type <span class="text-danger">*</span></label>
+                                        <select asp-for="WasteType" class="form-select">
+                                            <option value="">Select waste type...</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.General">General Waste</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.Recyclable">Recyclable</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.Organic">Organic</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.Hazardous">Hazardous</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.Electronic">Electronic</option>
+                                            <option value="@GreenSync.Lib.Models.WasteType.Bulky">Bulky Items</option>
+                                        </select>
+                                        <span asp-validation-for="WasteType" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="Priority" class="form-label">Priority <span class="text-danger">*</span></label>
+                                        <select asp-for="Priority" class="form-select">
+                                            <option value="@GreenSync.Lib.Models.ReportPriority.Low">Low</option>
+                                            <option value="@GreenSync.Lib.Models.ReportPriority.Medium">Medium</option>
+                                            <option value="@GreenSync.Lib.Models.ReportPriority.High">High</option>
+                                            <option value="@GreenSync.Lib.Models.ReportPriority.Critical">Critical</option>
+                                        </select>
+                                        <span asp-validation-for="Priority" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="EstimatedVolume" class="form-label">Estimated Volume (m³)</label>
+                                        <input asp-for="EstimatedVolume" class="form-control" type="number" step="0.1" min="0" />
+                                        <span asp-validation-for="EstimatedVolume" class="text-danger small"></span>
+                                        <small class="text-muted">Approximate volume of waste in cubic meters</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="ImageUrl" class="form-label">Image URL</label>
+                                        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                                        <small class="text-muted">Optional: URL to an image of the waste</small>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label asp-for="Description" class="form-label">Description</label>
+                                        <textarea asp-for="Description" class="form-control" rows="4" 
+                                                  placeholder="Provide additional details about the waste, accessibility, or special instructions..."></textarea>
+                                        <span asp-validation-for="Description" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                                <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Text -->
+                <div class="alert alert-info mt-3" role="alert">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Note:</strong> Once a report is assigned to a collection truck, it can no longer be edited or deleted.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

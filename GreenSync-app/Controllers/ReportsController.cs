@@ -122,4 +122,126 @@ public class ReportsController : Controller
 
         return View(activeReports.OrderByDescending(r => r.Timestamp));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var currentUser = await _authService.GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null)
+        {
+            return NotFound();
+        }
+
+        // Users can only edit their own reports
+        if (report.UserId != currentUser.Id)
+        {
+            return Forbid();
+        }
+
+        // Only allow editing if status is still Reported
+        if (report.Status != ReportStatus.Reported)
+        {
+            TempData["Warning"] = "This report cannot be edited as it has already been processed.";
+        }
+
+        return View(report);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(Guid id, Report report)
+    {
+        var currentUser = await _authService.GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        if (id != report.Id)
+        {
+            return NotFound();
+        }
+
+        // Verify ownership
+        var existingReport = await _reportService.GetReportByIdAsync(id);
+        if (existingReport == null || existingReport.UserId != currentUser.Id)
+        {
+            return Forbid();
+        }
+
+        // Prevent editing if already assigned
+        if (existingReport.Status != ReportStatus.Reported)
+        {
+            TempData["Error"] = "Cannot edit a report that has already been assigned or processed.";
+            return RedirectToAction("Details", new { id });
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(report);
+        }
+
+        // Preserve important fields that shouldn't be changed via edit
+        report.UserId = existingReport.UserId;
+        report.Status = existingReport.Status;
+        report.Timestamp = existingReport.Timestamp;
+        report.AssignedTruckId = existingReport.AssignedTruckId;
+        report.CollectedAt = existingReport.CollectedAt;
+
+        var updatedReport = await _reportService.UpdateReportAsync(id, report);
+        if (updatedReport == null)
+        {
+            TempData["Error"] = "Failed to update report. Please try again.";
+            return View(report);
+        }
+
+        TempData["Success"] = "Report updated successfully!";
+        return RedirectToAction("Details", new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var currentUser = await _authService.GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null)
+        {
+            return NotFound();
+        }
+
+        // Verify ownership
+        if (report.UserId != currentUser.Id)
+        {
+            return Forbid();
+        }
+
+        // Prevent deletion if already assigned
+        if (report.Status != ReportStatus.Reported)
+        {
+            TempData["Error"] = "Cannot delete a report that has already been assigned or processed.";
+            return RedirectToAction("Details", new { id });
+        }
+
+        var success = await _reportService.DeleteReportAsync(id);
+        if (success)
+        {
+            TempData["Success"] = "Report deleted successfully.";
+            return RedirectToAction("Index");
+        }
+
+        TempData["Error"] = "Failed to delete report. Please try again.";
+        return RedirectToAction("Details", new { id });
+    }
 }

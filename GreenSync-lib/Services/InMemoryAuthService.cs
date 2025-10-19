@@ -90,9 +90,11 @@ public class InMemoryAuthService : IAuthService
 
     public async Task<bool> IsInRoleAsync(string userId, string role)
     {
+        //to satisfy warning
+        await Task.CompletedTask;
+        
         var user = _users.FirstOrDefault(u => u.Id == userId);
         if (user == null) return false;
-
         return user.Role.ToString().Equals(role, StringComparison.OrdinalIgnoreCase);
     }
 

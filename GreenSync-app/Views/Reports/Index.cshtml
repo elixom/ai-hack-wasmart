@@ -1,0 +1,254 @@
+@model IEnumerable<GreenSync.Lib.Models.Report>
+@{
+    ViewData["Title"] = "My Reports";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-success fw-bold mb-0">
+                        <i class="bi bi-file-earmark-text"></i> My Reports
+                    </h2>
+                    <p class="text-muted">View and manage all your waste reports</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Create", "Reports")" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> New Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter/Stats Section -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary fw-bold">@Model.Count()</h3>
+                    <small class="text-muted">Total Reports</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-warning fw-bold">@Model.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Reported)</h3>
+                    <small class="text-muted">Pending</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-info fw-bold">@Model.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.InProgress)</h3>
+                    <small class="text-muted">In Progress</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success fw-bold">@Model.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Collected)</h3>
+                    <small class="text-muted">Collected</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Reports</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Type</th>
+                                        <th>Priority</th>
+                                        <th>Date</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var report in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <i class="bi bi-geo-alt text-success"></i>
+                                                    <strong>@report.Location</strong>
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(report.Description))
+                                                {
+                                                    <small class="text-muted">@(report.Description.Length > 50 ? report.Description.Substring(0, 50) + "..." : report.Description)</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                @switch (report.Status)
+                                                {
+                                                    case GreenSync.Lib.Models.ReportStatus.Reported:
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="bi bi-clock"></i> Reported
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportStatus.Assigned:
+                                                        <span class="badge bg-info">
+                                                            <i class="bi bi-truck"></i> Assigned
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportStatus.InProgress:
+                                                        <span class="badge bg-primary">
+                                                            <i class="bi bi-arrow-repeat"></i> In Progress
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportStatus.Collected:
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-check-circle"></i> Collected
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportStatus.Cancelled:
+                                                        <span class="badge bg-secondary">
+                                                            <i class="bi bi-x-circle"></i> Cancelled
+                                                        </span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@report.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">@report.WasteType</span>
+                                            </td>
+                                            <td>
+                                                @switch (report.Priority)
+                                                {
+                                                    case GreenSync.Lib.Models.ReportPriority.Low:
+                                                        <span class="badge bg-secondary">Low</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportPriority.Medium:
+                                                        <span class="badge bg-info">Medium</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportPriority.High:
+                                                        <span class="badge bg-warning text-dark">High</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.ReportPriority.Critical:
+                                                        <span class="badge bg-danger">Critical</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>@report.Timestamp.ToString("MMM dd, yyyy")</small>
+                                                <br/>
+                                                <small class="text-muted">@report.Timestamp.ToString("hh:mm tt")</small>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="@Url.Action("Details", new { id = report.Id })" 
+                                                       class="btn btn-outline-primary" 
+                                                       title="View Details">
+                                                        <i class="bi bi-eye"></i> View
+                                                    </a>
+                                                    @if (report.Status == GreenSync.Lib.Models.ReportStatus.Reported)
+                                                    {
+                                                        <a href="@Url.Action("Edit", new { id = report.Id })" 
+                                                           class="btn btn-outline-warning" 
+                                                           title="Edit Report">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <button type="button" 
+                                                                class="btn btn-outline-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#deleteModal" 
+                                                                data-report-id="@report.Id"
+                                                                data-report-location="@report.Location"
+                                                                title="Delete Report">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                            <p class="text-muted mt-3">You haven't submitted any reports yet.</p>
+                            <a href="@Url.Action("Create", "Reports")" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Create Your First Report
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle"></i> Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this report?</p>
+                <p class="text-muted">
+                    <strong>Location:</strong> <span id="deleteReportLocation"></span>
+                </p>
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-info-circle"></i> This action cannot be undone.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete Report
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle delete modal
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var reportId = button.getAttribute('data-report-id');
+            var reportLocation = button.getAttribute('data-report-location');
+            
+            var deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '@Url.Action("Delete", "Reports")/' + reportId;
+            
+            var locationSpan = document.getElementById('deleteReportLocation');
+            locationSpan.textContent = reportLocation;
+        });
+    </script>
+}
