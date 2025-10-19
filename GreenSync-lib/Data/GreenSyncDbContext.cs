@@ -394,10 +394,9 @@ public class GreenSyncDbContext : IdentityDbContext<ApplicationUser, IdentityRol
                 NormalizedName = "ADMINISTRATOR",
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             }
-        );
-
-        // Seed default user role
-        var userRoleId = Guid.Parse("B2C3D4E5-F6G7-8901-BCDE-F23456789012");
+        ); 
+                // Seed default user role
+                var userRoleId = Guid.Parse("B2C3D4E5-F6A7-8901-BCDE-F23456789012");
         builder.Entity<IdentityRole<Guid>>().HasData(
             new IdentityRole<Guid>
             {
@@ -409,7 +408,7 @@ public class GreenSyncDbContext : IdentityDbContext<ApplicationUser, IdentityRol
         );
 
         // Seed driver role
-        var driverRoleId = Guid.Parse("C3D4E5F6-G7H8-9012-CDEF-345678901234");
+        var driverRoleId = Guid.Parse("C3D4E5F6-A7B8-9012-CDEF-345678901234");
         builder.Entity<IdentityRole<Guid>>().HasData(
             new IdentityRole<Guid>
             {
