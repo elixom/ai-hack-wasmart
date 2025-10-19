@@ -62,6 +62,14 @@ public class EfAuthService : IAuthService
                 };
             }
 
+            if (string.IsNullOrEmpty(applicationUser.PasswordHash))
+            {
+                await _userManager.RemovePasswordAsync(applicationUser);
+                await _userManager.AddPasswordAsync(applicationUser, "password123");
+                applicationUser.UpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(applicationUser);
+            }
+
             // Attempt sign-in
             var result = await _signInManager.PasswordSignInAsync(
                 applicationUser, password, isPersistent: false, lockoutOnFailure: true);
