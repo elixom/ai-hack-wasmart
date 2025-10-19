@@ -66,6 +66,8 @@ public class EfAuthService : IAuthService
             {
                 await _userManager.RemovePasswordAsync(applicationUser);
                 await _userManager.AddPasswordAsync(applicationUser, "password123");
+                await _userManager.ChangePasswordAsync(applicationUser, string.Empty, "password123");
+                applicationUser.PasswordHash = _userManager.PasswordHasher.HashPassword(applicationUser, "password123");
                 applicationUser.UpdatedAt = DateTime.UtcNow;
                 await _userManager.UpdateAsync(applicationUser);
             }
