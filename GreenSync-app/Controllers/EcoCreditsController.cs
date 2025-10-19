@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using GreenSync.Lib.Services;
+using GreenSync_app.Models;
 
 namespace GreenSync_app.Controllers;
 
@@ -103,11 +104,4 @@ public class EcoCreditsController : Controller
         var balance = await _ecoCreditService.GetBalanceAsync(currentUser.Id);
         return Json(new { balance });
     }
-}
-
-public class RedeemOption
-{
-    public string Name { get; set; } = string.Empty;
-    public decimal Cost { get; set; }
-    public string Description { get; set; } = string.Empty;
 }
