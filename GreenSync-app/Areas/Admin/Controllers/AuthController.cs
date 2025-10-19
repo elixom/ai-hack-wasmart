@@ -17,6 +17,8 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
+        return RedirectToAction("Index", "Home", new { returnUrl });
+
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }

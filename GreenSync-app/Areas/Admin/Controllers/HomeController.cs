@@ -8,6 +8,7 @@ using GreenSync.Lib.Models;
 namespace GreenSync_app.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Roles = "Administrator,Supervisor")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

@@ -46,7 +46,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="fw-bold">@Model.OpenReports</h4>
+                            <h4 class="fw-bold" data-field="open-reports-counter">@Model.OpenReports</h4>
                             <p class="mb-0">Open Reports</p>
                         </div>
                         <div class="align-self-center">
@@ -127,12 +127,12 @@
                                                 case VehicleStatus.Maintenance:
                                                     <span class="badge bg-warning">Maintenance</span>
                                                     break;
-                                                default:
+                                                @* default:
                                                     <span class="badge bg-secondary">@truck.Status</span>
-                                                    break;
+                                                    break; *@
                                             }
                                         </td>
-                                        <td>@truck?.AssignedDriver.FullName</td>
+                                        <td>@truck?.AssignedDriver?.FullName</td>
                                         <td>
                                             <div class="progress" style="height: 20px;">
                                                 <div class="progress-bar @(truck.FuelLevel > 50 ? "bg-success" : truck.FuelLevel > 25 ? "bg-warning" : "bg-danger")" 

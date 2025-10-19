@@ -62,12 +62,16 @@ builder.Services.AddSession(options =>
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 // Register our services
 builder.Services.AddScoped<IReportService, GreenSync.Lib.Services.EntityFramework.EfReportService>();
 builder.Services.AddScoped<IEcoCreditService, GreenSync.Lib.Services.EntityFramework.EfEcoCreditService>();
 builder.Services.AddScoped<IRouteService, GreenSync.Lib.Services.EntityFramework.EfRouteService>();
 builder.Services.AddScoped<IFleetVehicleService, GreenSync.Lib.Services.EntityFramework.EfFleetVehicleService>();
 builder.Services.AddScoped<IAuthService, GreenSync.Lib.Services.EntityFramework.EfAuthService>();
+builder.Services.AddScoped<INotificationService, GreenSync.Lib.Services.SignalRNotificationService>();
 builder.Services.AddSingleton<IMapsService, AzureMapsService>();
 builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 
@@ -100,5 +104,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// Map SignalR Hubs
+app.MapHub<GreenSync.Lib.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();

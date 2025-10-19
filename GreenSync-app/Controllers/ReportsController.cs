@@ -12,6 +12,7 @@ public class ReportsController : Controller
     private readonly IEcoCreditService _ecoCreditService;
     private readonly IMapsService _mapsService;
     private readonly IFileStorageService _fileStorageService;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<ReportsController> _logger;
 
     public ReportsController(
@@ -20,6 +21,7 @@ public class ReportsController : Controller
         IEcoCreditService ecoCreditService, 
         IMapsService mapsService,
         IFileStorageService fileStorageService,
+        INotificationService notificationService,
         ILogger<ReportsController> logger)
     {
         _reportService = reportService;
@@ -27,6 +29,7 @@ public class ReportsController : Controller
         _ecoCreditService = ecoCreditService;
         _mapsService = mapsService;
         _fileStorageService = fileStorageService;
+        _notificationService = notificationService;
         _logger = logger;
     }
 
@@ -124,6 +127,18 @@ public class ReportsController : Controller
             $"Report submitted for {model.Location}",
             createdReport.Id
         );
+
+        // Notify admins of new report
+        try
+        {
+            await _notificationService.NotifyAdminsOfNewReportAsync(createdReport);
+            _logger.LogInformation("Admin notification sent for new report {ReportId}", createdReport.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send admin notification for report {ReportId}", createdReport.Id);
+            // Don't fail the report creation if notification fails
+        }
 
         TempData["Success"] = "Report submitted successfully! You've earned 10 Eco-Credits.";
         return RedirectToAction("Details", new { id = createdReport.Id });
@@ -280,6 +295,17 @@ public class ReportsController : Controller
             return View(report);
         }
 
+        // Notify admins of new report
+        try
+        {
+            await _notificationService.NotifyAdminsOfNewReportAsync(updatedReport);
+            _logger.LogInformation("Admin notification sent for edited report {ReportId}", updatedReport.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send admin notification for report {ReportId}", updatedReport.Id);
+            // Don't fail the report creation if notification fails
+        }
         TempData["Success"] = "Report updated successfully!";
         return RedirectToAction("Details", new { id });
     }
@@ -315,7 +341,18 @@ public class ReportsController : Controller
 
         var success = await _reportService.DeleteReportAsync(id);
         if (success)
-        {
+        {     // Notify admins of new report
+            try
+            {
+                await _notificationService.SendReportCountToGroupAsync(await _reportService.CountActiveReports(), id);
+                _logger.LogInformation("Admin notification sent for deleted report ");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send admin notification for report {ReportId}", id);
+                // Don't fail the report creation if notification fails
+            }
+
             TempData["Success"] = "Report deleted successfully.";
             return RedirectToAction("Index");
         }
