@@ -1,0 +1,253 @@
+@model List<RedeemOption>
+@{
+    ViewData["Title"] = "Redeem Eco-Credits";
+    decimal currentBalance = (decimal)ViewBag.CurrentBalance;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-success fw-bold mb-0">
+                        <i class="bi bi-gift"></i> Redeem Eco-Credits
+                    </h2>
+                    <p class="text-muted">Exchange your credits for valuable rewards and services</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Overview
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Balance Alert -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success d-flex align-items-center">
+                <i class="bi bi-wallet2 me-3 fs-4"></i>
+                <div>
+                    <h5 class="mb-1">Your Current Balance: <strong>@currentBalance Eco-Credits</strong></h5>
+                    <p class="mb-0 text-muted">Select any reward below to redeem your credits</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Redemption Categories -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h4 class="text-primary mb-3">
+                <i class="bi bi-star"></i> Available Rewards
+            </h4>
+        </div>
+    </div>
+
+    <!-- Municipal Services -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="text-success mb-3">
+                <i class="bi bi-building"></i> Municipal Services
+            </h5>
+        </div>
+        
+        @foreach (var option in Model.Where(o => o.Name.Contains("Municipal") || o.Name.Contains("Water") || o.Name.Contains("Waste Collection")))
+        {
+            <div class="col-lg-6 col-xl-4 mb-3">
+                <div class="card h-100 @(currentBalance >= option.Cost ? "border-success" : "border-secondary")">
+                    <div class="card-header @(currentBalance >= option.Cost ? "bg-success text-white" : "bg-light text-muted")">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0">
+                                @if (option.Name.Contains("Water"))
+                                {
+                                    <i class="bi bi-droplet"></i>
+                                }
+                                else if (option.Name.Contains("Waste"))
+                                {
+                                    <i class="bi bi-trash3"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-building"></i>
+                                }
+                                @option.Name
+                            </h6>
+                            <span class="badge @(currentBalance >= option.Cost ? "bg-light text-success" : "bg-secondary")">
+                                @option.Cost Credits
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@option.Description</p>
+                        
+                        @if (currentBalance >= option.Cost)
+                        {
+                            <form method="post" asp-action="Redeem" class="d-inline">
+                                <input type="hidden" name="optionName" value="@option.Name" />
+                                <input type="hidden" name="cost" value="@option.Cost" />
+                                <input type="hidden" name="description" value="@option.Description" />
+                                <button type="submit" class="btn btn-success w-100" onclick="return confirm('Are you sure you want to redeem @option.Cost credits for @option.Name?')">
+                                    <i class="bi bi-check-circle"></i> Redeem Now
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                <i class="bi bi-exclamation-circle"></i> Insufficient Credits
+                            </button>
+                            <small class="text-muted d-block mt-2 text-center">
+                                Need @(option.Cost - currentBalance) more credits
+                            </small>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Community & Environmental -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="text-success mb-3">
+                <i class="bi bi-tree"></i> Community & Environmental
+            </h5>
+        </div>
+        
+        @foreach (var option in Model.Where(o => o.Name.Contains("Certificate") || o.Name.Contains("Garden") || o.Name.Contains("Environmental")))
+        {
+            <div class="col-lg-6 col-xl-4 mb-3">
+                <div class="card h-100 @(currentBalance >= option.Cost ? "border-success" : "border-secondary")">
+                    <div class="card-header @(currentBalance >= option.Cost ? "bg-success text-white" : "bg-light text-muted")">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0">
+                                @if (option.Name.Contains("Certificate"))
+                                {
+                                    <i class="bi bi-award"></i>
+                                }
+                                else if (option.Name.Contains("Garden"))
+                                {
+                                    <i class="bi bi-flower1"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-tree"></i>
+                                }
+                                @option.Name
+                            </h6>
+                            <span class="badge @(currentBalance >= option.Cost ? "bg-light text-success" : "bg-secondary")">
+                                @option.Cost Credits
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@option.Description</p>
+                        
+                        @if (currentBalance >= option.Cost)
+                        {
+                            <form method="post" asp-action="Redeem" class="d-inline">
+                                <input type="hidden" name="optionName" value="@option.Name" />
+                                <input type="hidden" name="cost" value="@option.Cost" />
+                                <input type="hidden" name="description" value="@option.Description" />
+                                <button type="submit" class="btn btn-success w-100" onclick="return confirm('Are you sure you want to redeem @option.Cost credits for @option.Name?')">
+                                    <i class="bi bi-check-circle"></i> Redeem Now
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                <i class="bi bi-exclamation-circle"></i> Insufficient Credits
+                            </button>
+                            <small class="text-muted d-block mt-2 text-center">
+                                Need @(option.Cost - currentBalance) more credits
+                            </small>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="text-primary mb-3">
+                        <i class="bi bi-question-circle"></i> How Redemption Works
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="bi bi-1-circle-fill text-primary fs-2"></i>
+                            <h6 class="mt-2">Choose Reward</h6>
+                            <small class="text-muted">Select from available redemption options</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="bi bi-2-circle-fill text-primary fs-2"></i>
+                            <h6 class="mt-2">Confirm Redemption</h6>
+                            <small class="text-muted">Credits are immediately deducted</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="bi bi-3-circle-fill text-primary fs-2"></i>
+                            <h6 class="mt-2">Receive Instructions</h6>
+                            <small class="text-muted">Get details on how to claim your reward</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="bi bi-4-circle-fill text-primary fs-2"></i>
+                            <h6 class="mt-2">Enjoy Benefits</h6>
+                            <small class="text-muted">Use your reward for environmental impact</small>
+                        </div>
+                    </div>
+                    <hr class="my-3">
+                    <div class="text-center">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Note:</strong> All redemptions are final. Credits cannot be refunded once redeemed.
+                        </p>
+                        <p class="text-muted mb-0">
+                            <small>For questions about redemptions, contact our support team.</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earn More Credits CTA -->
+    @if (currentBalance < 20)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <h6><i class="bi bi-lightbulb"></i> Need More Credits?</h6>
+                    <p class="mb-2">Submit waste reports to earn more Eco-Credits and unlock additional rewards!</p>
+                    <a href="@Url.Action("Create", "Reports")" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Report Waste Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

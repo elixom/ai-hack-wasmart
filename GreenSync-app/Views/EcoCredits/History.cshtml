@@ -1,0 +1,321 @@
+@model List<GreenSync.Lib.Models.EcoCreditTransaction>
+@{
+    ViewData["Title"] = "Transaction History";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-success fw-bold mb-0">
+                        <i class="bi bi-clock-history"></i> Transaction History
+                    </h2>
+                    <p class="text-muted">Complete history of your Eco-Credits transactions</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Overview
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <!-- Statistics Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <i class="bi bi-plus-circle fs-2 mb-2"></i>
+                        <h4>@Model.Where(t => t.Amount > 0).Sum(t => t.Amount)</h4>
+                        <small>Total Earned</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <i class="bi bi-minus-circle fs-2 mb-2"></i>
+                        <h4>@Math.Abs(Model.Where(t => t.Amount < 0).Sum(t => t.Amount))</h4>
+                        <small>Total Redeemed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center bg-info text-white">
+                    <div class="card-body">
+                        <i class="bi bi-list-ul fs-2 mb-2"></i>
+                        <h4>@Model.Count</h4>
+                        <small>Total Transactions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center bg-warning text-white">
+                    <div class="card-body">
+                        <i class="bi bi-calendar fs-2 mb-2"></i>
+                        <h4>@Model.Where(t => t.TransactionDate >= DateTime.Now.AddDays(-30)).Count()</h4>
+                        <small>This Month</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-2">Filter Transactions</h6>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="transactionFilter" id="all" value="all" checked>
+                                    <label class="btn btn-outline-primary" for="all">All</label>
+
+                                    <input type="radio" class="btn-check" name="transactionFilter" id="earned" value="earned">
+                                    <label class="btn btn-outline-success" for="earned">Earned</label>
+
+                                    <input type="radio" class="btn-check" name="transactionFilter" id="redeemed" value="redeemed">
+                                    <label class="btn btn-outline-primary" for="redeemed">Redeemed</label>
+
+                                    <input type="radio" class="btn-check" name="transactionFilter" id="bonus" value="bonus">
+                                    <label class="btn btn-outline-warning" for="bonus">Bonus</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    Showing @Model.Count transaction(s) from @Model.Min(t => t.TransactionDate).ToString("MMM yyyy") to @Model.Max(t => t.TransactionDate).ToString("MMM yyyy")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list"></i> All Transactions
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" class="text-end">Amount</th>
+                                        <th scope="col" class="text-end">Balance After</th>
+                                        <th scope="col">Reference</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transaction in Model.OrderByDescending(t => t.TransactionDate))
+                                    {
+                                        <tr class="transaction-row" data-type="@transaction.Type.ToString().ToLower()">
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold">@transaction.TransactionDate.ToString("MMM dd, yyyy")</span>
+                                                    <small class="text-muted">@transaction.TransactionDate.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @switch (transaction.Type)
+                                                {
+                                                    case GreenSync.Lib.Models.TransactionType.Earned:
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-arrow-up"></i> Earned
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.TransactionType.Redeemed:
+                                                        <span class="badge bg-primary">
+                                                            <i class="bi bi-arrow-down"></i> Redeemed
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.TransactionType.Bonus:
+                                                        <span class="badge bg-warning">
+                                                            <i class="bi bi-star"></i> Bonus
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.TransactionType.Penalty:
+                                                        <span class="badge bg-danger">
+                                                            <i class="bi bi-dash-circle"></i> Penalty
+                                                        </span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.TransactionType.Adjustment:
+                                                        <span class="badge bg-secondary">
+                                                            <i class="bi bi-gear"></i> Adjustment
+                                                        </span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-light text-dark">@transaction.Type</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (transaction.Type == GreenSync.Lib.Models.TransactionType.Earned)
+                                                    {
+                                                        <i class="bi bi-file-earmark-plus text-success me-2"></i>
+                                                    }
+                                                    else if (transaction.Type == GreenSync.Lib.Models.TransactionType.Redeemed)
+                                                    {
+                                                        <i class="bi bi-gift text-primary me-2"></i>
+                                                    }
+                                                    else if (transaction.Type == GreenSync.Lib.Models.TransactionType.Bonus)
+                                                    {
+                                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                                    }
+                                                    <div>
+                                                        <span>@transaction.Description</span>
+                                                        @if (transaction.RelatedReportId.HasValue)
+                                                        {
+                                                            <br><small class="text-muted">
+                                                                <i class="bi bi-link-45deg"></i>
+                                                                Related to Report: @transaction.RelatedReportId.Value.ToString("N")[..8]...
+                                                            </small>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                @if (transaction.Amount > 0)
+                                                {
+                                                    <span class="text-success fw-bold">+@transaction.Amount</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-danger fw-bold">@transaction.Amount</span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="badge bg-light text-dark">@transaction.BalanceAfter</span>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(transaction.ReferenceNumber))
+                                                {
+                                                    <code class="small">@transaction.ReferenceNumber</code>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-calendar3"></i> Monthly Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var monthGroup in Model.GroupBy(t => new { t.TransactionDate.Year, t.TransactionDate.Month }).OrderByDescending(g => g.Key.Year).ThenByDescending(g => g.Key.Month).Take(6))
+                            {
+                                var monthName = new DateTime(monthGroup.Key.Year, monthGroup.Key.Month, 1).ToString("MMM yyyy");
+                                var monthlyEarned = monthGroup.Where(t => t.Amount > 0).Sum(t => t.Amount);
+                                var monthlyRedeemed = Math.Abs(monthGroup.Where(t => t.Amount < 0).Sum(t => t.Amount));
+                                var monthlyNet = monthlyEarned - monthlyRedeemed;
+
+                                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center p-3">
+                                            <h6 class="text-muted mb-1">@monthName</h6>
+                                            <div class="text-success small">+@monthlyEarned earned</div>
+                                            <div class="text-primary small">-@monthlyRedeemed redeemed</div>
+                                            <hr class="my-2">
+                                            <div class="fw-bold @(monthlyNet >= 0 ? "text-success" : "text-danger")">
+                                                @(monthlyNet >= 0 ? "+" : "")@monthlyNet net
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- No Transactions State -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">No Transactions Yet</h4>
+                        <p class="text-muted mb-4">
+                            Start earning Eco-Credits by submitting waste reports and participating in environmental activities!
+                        </p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="@Url.Action("Create", "Reports")" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Submit Report
+                            </a>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                                <i class="bi bi-house"></i> Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Transaction filtering functionality
+        const filterRadios = document.querySelectorAll('input[name="transactionFilter"]');
+        const transactionRows = document.querySelectorAll('.transaction-row');
+
+        filterRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const filterValue = this.value;
+                
+                transactionRows.forEach(row => {
+                    const transactionType = row.getAttribute('data-type');
+                    
+                    if (filterValue === 'all' || transactionType === filterValue) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Update visible count
+                updateVisibleCount();
+            });
+        });
+
+        function updateVisibleCount() {
+            const visibleRows = document.querySelectorAll('.transaction-row:not([style*="display: none"])');
+            const countElement = document.querySelector('.table-responsive').closest('.card').querySelector('.card-header h5');
+            countElement.innerHTML = `<i class="bi bi-list"></i> Transactions (${visibleRows.length})`;
+        }
+    });
+</script>
