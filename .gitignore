@@ -419,3 +419,7 @@ FodyWeavers.xsd
 
 # User uploaded files
 **/wwwroot/uploads/
+*appsettings.Development.json
+GreenSync-app/appsettings.Development.json
+**/GreenSync-app/appsettings.Development.json
+*/GreenSync-app/appsettings.Development.json
