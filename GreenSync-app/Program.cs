@@ -67,7 +67,7 @@ builder.Services.AddScoped<IReportService, GreenSync.Lib.Services.EntityFramewor
 builder.Services.AddScoped<IEcoCreditService, GreenSync.Lib.Services.EntityFramework.EfEcoCreditService>();
 builder.Services.AddScoped<IRouteService, GreenSync.Lib.Services.EntityFramework.EfRouteService>();
 builder.Services.AddScoped<IFleetVehicleService, GreenSync.Lib.Services.EntityFramework.EfFleetVehicleService>();
-builder.Services.AddScoped<IAuthService, InMemoryAuthService>(); // TODO: Replace with Identity-based auth service
+builder.Services.AddScoped<IAuthService, GreenSync.Lib.Services.EntityFramework.EfAuthService>();
 builder.Services.AddSingleton<IMapsService, AzureMapsService>();
 builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 

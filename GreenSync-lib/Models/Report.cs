@@ -156,6 +156,7 @@ public class Report
     /// </summary>
     [ForeignKey(nameof(AssignedRouteId))]
     public virtual Route? AssignedRoute { get; set; }
+    public virtual List<ReportImage> Images { get; set; }
 }
 
 public enum ReportStatus
