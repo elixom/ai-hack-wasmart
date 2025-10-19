@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using GreenSync.Lib.Services;
 using GreenSync.Lib.Models;
 using GreenSync_app.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GreenSync_app.Areas.Admin.Controllers;
 

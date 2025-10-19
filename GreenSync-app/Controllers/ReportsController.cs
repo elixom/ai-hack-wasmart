@@ -183,7 +183,7 @@ public class ReportsController : Controller
         var userReports = await _reportService.GetReportsByUserIdAsync(currentUser.Id);
         var activeReports = userReports.Where(r => r.Status != ReportStatus.Collected && r.Status != ReportStatus.Cancelled);
 
-        return View(activeReports.OrderByDescending(r => r.Timestamp));
+        return View("Index", activeReports.OrderByDescending(r => r.Timestamp));
     }
 
     [HttpGet]
