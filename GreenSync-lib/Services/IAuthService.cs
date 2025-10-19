@@ -33,5 +33,6 @@ public class User
 public enum UserRole
 {
     User,
+    Driver,
     Admin
 }
