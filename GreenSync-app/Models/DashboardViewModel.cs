@@ -17,4 +17,5 @@ public class DashboardViewModel
         "Scheduled pickup for Park Avenue Commercial District tomorrow at 9:00 AM",
         "You earned 25 Eco-Credits for your recent recycling report!"
     };
+    public string AzureMapsClientId { get; set; } = string.Empty;
 }

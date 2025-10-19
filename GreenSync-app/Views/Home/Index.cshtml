@@ -88,6 +88,22 @@
         </div>
     </div>
 
+    <!-- Azure Maps Container -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-map text-success"></i> Waste Report Locations
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="wasteReportsMap" style="height: 450px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Recent Reports -->
         <div class="col-lg-8 mb-4">
@@ -231,3 +247,26 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <!-- Azure Maps Web SDK -->
+    <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.css" type="text/css" />
+    <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.js"></script>
+    
+    <!-- Map initialization script -->
+    <script>
+        window.azureMapsConfig = {
+            clientId: '@Model.AzureMapsClientId',
+            reports: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentReports.Select(r => new {
+                id = r.Id,
+                location = r.Location,
+                latitude = r.Latitude,
+                longitude = r.Longitude,
+                status = r.Status.ToString(),
+                wasteType = r.WasteType,
+                timestamp = r.Timestamp.ToString("MMM dd, yyyy")
+            })))
+        };
+    </script>
+    <script src="~/js/map.js"></script>
+}

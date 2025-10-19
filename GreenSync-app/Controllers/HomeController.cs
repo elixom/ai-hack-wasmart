@@ -11,14 +11,17 @@ public class HomeController : Controller
     private readonly IAuthService _authService;
     private readonly IReportService _reportService;
     private readonly IEcoCreditService _ecoCreditService;
+    private readonly IMapsService _mapsService;
 
     public HomeController(ILogger<HomeController> logger, IAuthService authService, 
-                         IReportService reportService, IEcoCreditService ecoCreditService)
+                         IReportService reportService, IEcoCreditService ecoCreditService,
+                         IMapsService mapsService)
     {
         _logger = logger;
         _authService = authService;
         _reportService = reportService;
         _ecoCreditService = ecoCreditService;
+        _mapsService = mapsService;
     }
 
     public async Task<IActionResult> Index()
@@ -40,7 +43,8 @@ public class HomeController : Controller
             EcoCredit = ecoCredit,
             TotalReports = userReports.Count(),
             PendingReports = userReports.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Reported),
-            CollectedReports = userReports.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Collected)
+            CollectedReports = userReports.Count(r => r.Status == GreenSync.Lib.Models.ReportStatus.Collected),
+            AzureMapsClientId = _mapsService.GetClientId()
         };
 
         return View(viewModel);
