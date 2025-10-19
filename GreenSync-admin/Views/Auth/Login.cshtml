@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Admin Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-primary bg-gradient admin-login">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0 admin-login-card fade-in-up">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-shield-check fs-3"></i>
+                            </div>
+                            <h2 class="text-primary fw-bold">GreenSync Admin</h2>
+                            <p class="text-muted">Municipal Command Center</p>
+                        </div>
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+                            </div>
+                        }
+
+                        <form method="post" asp-action="Login" asp-controller="Auth">
+                            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                            
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Administrator Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
+                                    <input type="text" class="form-control form-control-lg" id="username" name="username" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                                    <input type="password" class="form-control form-control-lg" id="password" name="password" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-shield-lock"></i> Secure Admin Login
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-info-circle text-primary"></i> Demo Access
+                                </h6>
+                                <p class="card-text small mb-2">
+                                    <strong>Administrator:</strong> admin / admin123
+                                </p>
+                                <div class="small text-muted">
+                                    <i class="bi bi-shield-check"></i> Secure administrative access only
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Features -->
+                <div class="text-center mt-4">
+                    <div class="row text-white">
+                        <div class="col-4">
+                            <i class="bi bi-shield-fill-check fs-4"></i>
+                            <div class="small">Secure Access</div>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-lock-fill fs-4"></i>
+                            <div class="small">Encrypted</div>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-eye-slash-fill fs-4"></i>
+                            <div class="small">Private</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

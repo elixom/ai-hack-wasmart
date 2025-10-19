@@ -199,10 +199,3 @@ public class RouteController : Controller
         return Json(new { success = false, message = "Failed to assign truck to route" });
     }
 }
-
-public class RouteOptimizationResultViewModel
-{
-    public Route Route { get; set; } = new();
-    public List<Report> Reports { get; set; } = new();
-    public List<string> OptimizationSteps { get; set; } = new();
-}

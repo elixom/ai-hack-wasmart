@@ -17,7 +17,7 @@ public class AdminDashboardViewModel
     
     public List<Report> RecentReports { get; set; } = new();
     public List<Report> HotspotReports { get; set; } = new();
-    public List<Route> ActiveRoutesList { get; set; } = new();
+    public List<GreenSync.Lib.Models.Route> ActiveRoutesList { get; set; } = new();
     public List<MockTruck> MockTrucks { get; set; } = new();
 }
 
