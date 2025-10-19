@@ -1,4 +1,5 @@
 using GreenSync.Lib.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace GreenSync_app.Models;
 
@@ -11,5 +12,14 @@ public class CreateReportViewModel
     public ReportPriority Priority { get; set; } = ReportPriority.Medium;
     public double EstimatedVolume { get; set; }
     public WasteType WasteType { get; set; } = WasteType.General;
+    
+    /// <summary>
+    /// Legacy field - kept for backward compatibility
+    /// </summary>
     public string? ImageUrl { get; set; }
+    
+    /// <summary>
+    /// Multiple image file uploads
+    /// </summary>
+    public IFormFileCollection? ImageFiles { get; set; }
 }

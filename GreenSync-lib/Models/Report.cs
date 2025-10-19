@@ -8,7 +8,6 @@ public class Report
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
     
-    [Required]
     [DisplayName("Location")]
     public string Location { get; set; } = string.Empty;
     
@@ -29,6 +28,11 @@ public class Report
     
     [DisplayName("Image URL")]
     public string? ImageUrl { get; set; }
+    
+    /// <summary>
+    /// Collection of images associated with this report
+    /// </summary>
+    public List<ReportImage> Images { get; set; } = new List<ReportImage>();
     
     [Required]
     [DisplayName("Reported At")]
