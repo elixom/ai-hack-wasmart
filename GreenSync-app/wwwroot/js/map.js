@@ -18,7 +18,7 @@
         const config = window.azureMapsConfig;
 
         // Default center (can be customized based on user location or reports)
-        const defaultCenter = [-122.3321, 47.6062]; // Seattle coordinates as default
+        const defaultCenter = [18.0025, 76.79]; // Jamaica emancipation park coordinates as default
         const defaultZoom = 11;
 
         try {
@@ -84,7 +84,7 @@
 
     function addReportMarkers(map, dataSource, reports) {
         const features = [];
-        const bounds = new atlas.data.BoundingBox();
+        const positions = [];
 
         reports.forEach(function(report) {
             // Only add markers for reports with valid coordinates
@@ -101,9 +101,7 @@
                 });
 
                 features.push(feature);
-
-                // Expand bounds to include this point
-                bounds.extend(coordinates);
+                positions.push(coordinates);
             }
         });
 
@@ -183,7 +181,9 @@
         });
 
         // Set map view to show all markers
-        if (features.length > 0) {
+        if (features.length > 0 && positions.length > 0) {
+            // Create bounding box from positions
+            const bounds = atlas.data.BoundingBox.fromPositions(positions);
             map.setCamera({
                 bounds: bounds,
                 padding: 50
