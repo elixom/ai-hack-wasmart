@@ -199,5 +199,5 @@ The design should be:
 ### Project Structure
 - core code, entities models, services, database migrations go in the GreenSync-lib project
 - the main user interface goes in the GreenSync-app project
-- admistrative functions go in the GreenSync-admin project
+- admistrative functions go in the admin area of the  GreenSync-app project
 - You may create new files as you see fit but always ask before editing or replacing existing files.

@@ -1,0 +1,283 @@
+@model RouteOptimizationResultViewModel
+@{
+    ViewData["Title"] = "Route Optimization Results";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <strong>Route Optimization Complete!</strong> 
+                AI-powered analysis has successfully generated an optimized collection route with significant efficiency improvements.
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Route Summary -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-route"></i> Optimized Route: @Model.Route.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-center">
+                            <i class="bi bi-fuel-pump fs-2 text-success"></i>
+                            <h4 class="text-success fw-bold">@Model.Route.FuelSavingsMetric%</h4>
+                            <small class="text-muted">Fuel Savings</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <i class="bi bi-clock fs-2 text-primary"></i>
+                            <h4 class="text-primary fw-bold">@Model.Route.Duration min</h4>
+                            <small class="text-muted">Total Duration</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <i class="bi bi-geo-alt fs-2 text-info"></i>
+                            <h4 class="text-info fw-bold">@Model.Route.TotalDistance km</h4>
+                            <small class="text-muted">Total Distance</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <i class="bi bi-truck fs-2 text-warning"></i>
+                            <h4 class="text-warning fw-bold">@Model.Route.NumberOfStops</h4>
+                            <small class="text-muted">Collection Stops</small>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-list-ol"></i> Optimized Route Sequence:
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Stop #</th>
+                                            <th>Location</th>
+                                            <th>Coordinates</th>
+                                            <th>ETA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var waypoint in Model.Route.OptimizedPath.OrderBy(w => w.Order))
+                                        {
+                                            <tr class="@(waypoint.Address == "Depot" ? "table-success" : "")">
+                                                <td>
+                                                    @if (waypoint.Address == "Depot")
+                                                    {
+                                                        <i class="bi bi-house-fill text-success"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-primary">@waypoint.Order</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <strong>@waypoint.Address</strong>
+                                                    @if (waypoint.Address == "Depot")
+                                                    {
+                                                        <small class="text-muted"> - Start/End Point</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">@waypoint.Latitude.ToString("F4"), @waypoint.Longitude.ToString("F4")</small>
+                                                </td>
+                                                <td>
+                                                    @if (waypoint.EstimatedArrival.HasValue)
+                                                    {
+                                                        <span class="badge bg-secondary">@waypoint.EstimatedArrival.Value.ToString(@"hh\:mm")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Efficiency Metrics -->
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-graph-up"></i> Efficiency Score
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-4 text-success fw-bold">@Model.Route.EfficiencyScore</div>
+                    <small class="text-muted">Overall Performance Rating</small>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-currency-dollar"></i> Cost Analysis
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Estimated Fuel Cost:</span>
+                        <strong>$@Model.Route.EstimatedFuelCost</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Savings vs. Standard:</span>
+                        <strong class="text-success">$@(Math.Round((decimal)Model.Route.FuelSavingsMetric * 0.5m, 2))</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Monthly Projection:</span>
+                        <strong class="text-success">$@(Math.Round((decimal)Model.Route.FuelSavingsMetric * 15m, 2))</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Route Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success" onclick="deployRoute('@Model.Route.Id')">
+                            <i class="bi bi-play-circle"></i> Deploy Route
+                        </button>
+                        <a href="@Url.Action("Details", new { id = Model.Route.Id })" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                        <a href="@Url.Action("Optimize")" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Optimize Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Processing Steps -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-cpu"></i> AI Processing Steps
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        @foreach (var step in Model.OptimizationSteps)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <p class="mb-0">@step</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Included -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-list-check"></i> Reports Included (@Model.Reports.Count)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var report in Model.Reports)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <div>
+                                <strong>@report.Location</strong>
+                                <br><small class="text-muted">@report.WasteType - @report.EstimatedVolume m³</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-@(report.Priority == GreenSync.Lib.Models.ReportPriority.High ? "danger" : report.Priority == GreenSync.Lib.Models.ReportPriority.Medium ? "warning" : "info")">
+                                    @report.Priority
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Impact -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-tree"></i> Environmental Impact
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round(Model.Route.FuelSavingsMetric * 2.3, 1)) kg</h4>
+                            <small class="text-muted">CO2 Emissions Saved</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round(Model.Route.TotalDistance * 0.8, 1)) L</h4>
+                            <small class="text-muted">Fuel Saved</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round(Model.Route.Duration * 0.6, 0)) min</h4>
+                            <small class="text-muted">Time Saved</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@Model.Reports.Count</h4>
+                            <small class="text-muted">Communities Served</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deployRoute(routeId) {
+    if (confirm('Deploy this optimized route for collection?')) {
+        fetch(`/Route/UpdateStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: routeId,
+                status: 'Assigned'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Route deployed successfully!');
+                window.location.href = '/Home';
+            } else {
+                alert('Failed to deploy route: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deploying the route.');
+        });
+    }
+}
+</script>

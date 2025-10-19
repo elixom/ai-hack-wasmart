@@ -1,0 +1,152 @@
+@{
+    ViewData["Title"] = "Route Optimization";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> AI-Powered Route Optimization
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-exclamation-triangle fs-2 text-warning"></i>
+                                    <h5 class="mt-2">Unassigned Reports</h5>
+                                    <h3 class="text-warning">@ViewBag.UnassignedReports</h3>
+                                    <small class="text-muted">Reports awaiting collection</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-graph-up fs-2 text-success"></i>
+                                    <h5 class="mt-2">Expected Savings</h5>
+                                    <h3 class="text-success">15-25%</h3>
+                                    <small class="text-muted">Fuel reduction estimate</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>AI Route Optimization:</strong> Our machine learning algorithm analyzes waste hotspots, traffic patterns, and vehicle capacity to generate the most efficient collection routes, reducing fuel consumption and operational costs.
+                    </div>
+
+                    <form method="post" asp-action="Optimize" id="optimizeForm">
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Optimization Parameters:</h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="includeAllReports" value="true" id="includeAllReports">
+                                        <label class="form-check-label" for="includeAllReports">
+                                            <strong>Include All Pending Reports</strong>
+                                            <br><small class="text-muted">Otherwise, optimize for top 10 priority reports</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Optimization Algorithm:</label>
+                                        <select class="form-select" disabled>
+                                            <option selected>AI-Powered Distance Optimization</option>
+                                        </select>
+                                        <small class="text-muted">Advanced ML algorithm with traffic analysis</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-cpu"></i> AI Processing Steps:
+                                </h6>
+                                <ol class="mb-0">
+                                    <li>Analyze waste hotspot locations and priorities</li>
+                                    <li>Apply machine learning distance optimization algorithm</li>
+                                    <li>Factor in real-time traffic patterns and road conditions</li>
+                                    <li>Optimize for fuel efficiency and time reduction</li>
+                                    <li>Generate optimal pickup sequence</li>
+                                    <li>Calculate predicted operational efficiency gains</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg btn-optimize" id="optimizeBtn">
+                                <i class="bi bi-lightning"></i> Generate Optimized Route
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Simulation Preview -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-eye"></i> Preview: Route Optimization Benefits
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <i class="bi bi-fuel-pump fs-2 text-success"></i>
+                            <h6 class="mt-2">Fuel Savings</h6>
+                            <p class="text-muted small">Reduce fuel consumption by optimizing travel distance and routes</p>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="bi bi-clock fs-2 text-primary"></i>
+                            <h6 class="mt-2">Time Efficiency</h6>
+                            <p class="text-muted small">Minimize collection time through intelligent route planning</p>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="bi bi-tree fs-2 text-success"></i>
+                            <h6 class="mt-2">CO2 Reduction</h6>
+                            <p class="text-muted small">Lower carbon emissions through optimized fleet operations</p>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="bi bi-graph-up fs-2 text-info"></i>
+                            <h6 class="mt-2">Cost Savings</h6>
+                            <p class="text-muted small">Reduce operational costs and improve service efficiency</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('optimizeForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('optimizeBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Processing AI Optimization...';
+    btn.disabled = true;
+    
+    // Show processing animation
+    const card = document.querySelector('.card');
+    card.style.opacity = '0.7';
+});
+
+// Add some visual feedback
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in');
+    });
+});
+</script>
