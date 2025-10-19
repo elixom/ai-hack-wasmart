@@ -45,7 +45,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form asp-action="Edit" method="post">
+                        <form asp-action="Edit" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
                             <input type="hidden" asp-for="Id" />
                             <input type="hidden" asp-for="UserId" />
