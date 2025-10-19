@@ -16,4 +16,5 @@ public interface IReportService
     Task<bool> AssignReportToTruckAsync(Guid reportId, Guid truckId);
     Task<bool> UpdateReportStatusAsync(Guid reportId, ReportStatus status);
     Task<IEnumerable<Report>> GetHotspotReportsAsync();
+    Task<int> CountActiveReports();
 }

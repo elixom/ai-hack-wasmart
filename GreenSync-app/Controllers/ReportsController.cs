@@ -295,6 +295,17 @@ public class ReportsController : Controller
             return View(report);
         }
 
+        // Notify admins of new report
+        try
+        {
+            await _notificationService.NotifyAdminsOfNewReportAsync(updatedReport);
+            _logger.LogInformation("Admin notification sent for edited report {ReportId}", updatedReport.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send admin notification for report {ReportId}", updatedReport.Id);
+            // Don't fail the report creation if notification fails
+        }
         TempData["Success"] = "Report updated successfully!";
         return RedirectToAction("Details", new { id });
     }
@@ -330,7 +341,18 @@ public class ReportsController : Controller
 
         var success = await _reportService.DeleteReportAsync(id);
         if (success)
-        {
+        {     // Notify admins of new report
+            try
+            {
+                await _notificationService.SendReportCountToGroupAsync(await _reportService.CountActiveReports(), id);
+                _logger.LogInformation("Admin notification sent for deleted report ");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send admin notification for report {ReportId}", id);
+                // Don't fail the report creation if notification fails
+            }
+
             TempData["Success"] = "Report deleted successfully.";
             return RedirectToAction("Index");
         }

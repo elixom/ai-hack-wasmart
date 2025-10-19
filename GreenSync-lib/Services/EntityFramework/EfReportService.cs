@@ -336,5 +336,20 @@ public class EfReportService : IReportService
 
     private static double ToRadians(double degrees) => degrees * Math.PI / 180;
 
+    public async Task<int> CountActiveReports()
+    {
+        try
+        {
+            return await _context.Reports
+                .Where(r => r.Status == ReportStatus.Reported && r.AssignedVehicleId == null)
+                .CountAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving unassigned reports");
+            throw;
+        }
+    }
+
     #endregion
 }

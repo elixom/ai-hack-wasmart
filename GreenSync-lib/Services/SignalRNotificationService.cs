@@ -130,4 +130,24 @@ public class SignalRNotificationService : INotificationService
         await _hubContext.Clients.Group(groupName).SendAsync("ReceiveNotification", notification);
         _logger.LogInformation("Notification sent to group {GroupName}", groupName);
     }
+
+    /// <summary>
+    /// Send notification to specific group of users
+    /// </summary>
+    public async Task SendReportCountToGroupAsync(int reportCount, Guid focusId)
+    {
+        _logger.LogInformation("Sending notification to group reportCount: {reportCount}", reportCount);
+
+        var notification = new
+        {
+            ReportCount = reportCount,
+            Type = "ReportCount",
+            ReportId = focusId,
+            Timestamp = DateTime.UtcNow
+        };
+
+        await _hubContext.Clients.All.SendAsync("ReceiveReportCount", notification);
+        _logger.LogInformation("Notification sent to group ALL");
+    }
+     
 }

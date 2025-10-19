@@ -31,4 +31,5 @@ public interface INotificationService
     /// Send notification to specific group of users
     /// </summary>
     Task SendNotificationToGroupAsync(string groupName, string title, string message, string type = "info");
+    Task SendReportCountToGroupAsync(int value, Guid focusId);
 }

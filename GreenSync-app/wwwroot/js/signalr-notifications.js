@@ -91,6 +91,11 @@ class NotificationManager {
             console.log('Received general notification:', notification);
             this.showNotification(notification);
         });
+        // General ReceiveReportCount
+        this.connection.on("ReceiveReportCount", (notification) => {
+            console.log('Received ReceiveReportCount notification:', notification);
+            this.updateReportCounter(notification.reportCount);
+        }); 
     }
 
     /**
@@ -162,9 +167,9 @@ class NotificationManager {
      */
     createToast(notification) {
         const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        const typeClass = this.getBootstrapClass(notification.Type);
-        const iconClass = this.getIconClass(notification.Type);
-        const timestamp = this.formatTimestamp(notification.Timestamp);
+        const typeClass = this.getBootstrapClass(notification.type);
+        const iconClass = this.getIconClass(notification.type);
+        const timestamp = this.formatTimestamp(notification.timestamp);
 
         return `
             <div id="${toastId}" class="toast align-items-center text-bg-${typeClass} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
@@ -173,9 +178,9 @@ class NotificationManager {
                         <div class="d-flex align-items-start">
                             <i class="bi ${iconClass} me-2 mt-1"></i>
                             <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold">${this.escapeHtml(notification.Title)}</h6>
-                                <p class="mb-1">${this.escapeHtml(notification.Message)}</p>
-                                <small class="opacity-75">${timestamp}${notification.FromAdmin ? ' • From Admin' : ''}</small>
+                                <h6 class="mb-1 fw-bold">${this.escapeHtml(notification.title)}</h6>
+                                <p class="mb-1">${this.escapeHtml(notification.message)}</p>
+                                <small class="opacity-75">${timestamp}${notification.fromAdmin ? ' • From Admin' : ''}</small>
                             </div>
                         </div>
                     </div>
@@ -190,7 +195,7 @@ class NotificationManager {
      */
     createReportToast(notification) {
         const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        const timestamp = this.formatTimestamp(notification.Timestamp);
+        const timestamp = this.formatTimestamp(notification.timestamp);
 
         return `
             <div id="${toastId}" class="toast align-items-center text-bg-info border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="15000">
@@ -199,12 +204,12 @@ class NotificationManager {
                         <div class="d-flex align-items-start">
                             <i class="bi bi-exclamation-circle me-2 mt-1"></i>
                             <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold">${this.escapeHtml(notification.Title)}</h6>
-                                <p class="mb-1">${this.escapeHtml(notification.Message)}</p>
+                                <h6 class="mb-1 fw-bold">${this.escapeHtml(notification.title)}</h6>
+                                <p class="mb-1">${this.escapeHtml(notification.message)}</p>
                                 <div class="small mt-2">
-                                    <strong>Priority:</strong> <span class="badge bg-${this.getPriorityClass(notification.Priority)}">${notification.Priority}</span><br>
-                                    <strong>Type:</strong> ${notification.WasteType}<br>
-                                    <strong>Volume:</strong> ${notification.Volume} m³
+                                    <strong>Priority:</strong> <span class="badge bg-${this.getPriorityClass(notification.priority)}">${notification.priority}</span><br>
+                                    <strong>Type:</strong> ${notification.wasteType}<br>
+                                    <strong>Volume:</strong> ${notification.volume} m³
                                 </div>
                                 <small class="opacity-75 d-block mt-1">${timestamp}</small>
                             </div>
@@ -300,11 +305,15 @@ class NotificationManager {
     /**
      * Update report counter for admin
      */
-    updateReportCounter() {
-        const counter = document.getElementById('new-reports-counter');
+    updateReportCounter(newCount = null) {
+        const counter = document.querySelector('[data-field="open-reports-counter"]');
         if (counter) {
             const currentCount = parseInt(counter.textContent) || 0;
-            counter.textContent = currentCount + 1;
+            if (newCount !== null) {
+                currentCount = parseInt(newCount) || 0;
+            } else {
+                counter.textContent = currentCount + 1;
+            }
             counter.style.display = 'inline';
         }
     }
