@@ -55,6 +55,11 @@ public class HomeController : Controller
         return View(viewModel);
     }
 
+    public IActionResult About()
+    {
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();
