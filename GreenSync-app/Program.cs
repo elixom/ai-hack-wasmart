@@ -69,6 +69,7 @@ builder.Services.AddSingleton<IEcoCreditService, InMemoryEcoCreditService>();
 builder.Services.AddSingleton<IRouteService, InMemoryRouteService>();
 builder.Services.AddScoped<IAuthService, InMemoryAuthService>();
 builder.Services.AddSingleton<IMapsService, AzureMapsService>();
+builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 
 var app = builder.Build();
 

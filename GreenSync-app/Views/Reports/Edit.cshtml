@@ -60,10 +60,13 @@
                                 
                                 <!-- Location Input with Buttons -->
                                 <div class="mb-3">
-                                    <label asp-for="Location" class="form-label">Location <span class="text-danger">*</span></label>
+                                    <label asp-for="Location" class="form-label">Location (Optional)</label>
                                     <div class="input-group mb-2">
                                         <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                        <input asp-for="Location" class="form-control" placeholder="Enter street address or location name" required>
+                                        <input asp-for="Location" class="form-control" placeholder="Enter street address or location name" id="locationInput">
+                                        <button type="button" class="btn btn-outline-success" id="searchAddressBtn" title="Search for this address">
+                                            <i class="bi bi-search"></i> Search
+                                        </button>
                                         <button type="button" class="btn btn-outline-primary" id="useLocationBtn" title="Use my current location">
                                             <i class="bi bi-crosshair"></i> Use My Location
                                         </button>
@@ -147,11 +150,45 @@
                                         <span asp-validation-for="EstimatedVolume" class="text-danger small"></span>
                                         <small class="text-muted">Approximate volume of waste in cubic meters</small>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="ImageUrl" class="form-label">Image URL</label>
-                                        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
-                                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
-                                        <small class="text-muted">Optional: URL to an image of the waste</small>
+                                    <div class="col-12 mb-3">
+                                        <label for="ImageFiles" class="form-label">Upload Additional Images (Optional)</label>
+                                        <input type="file" 
+                                               class="form-control" 
+                                               id="ImageFiles" 
+                                               name="ImageFiles" 
+                                               accept="image/jpeg,image/png,image/gif,image/webp"
+                                               multiple>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle"></i> 
+                                            Add more images (JPG, PNG, GIF, WebP - max 10MB each)
+                                        </div>
+                                        
+                                        <!-- Image preview container -->
+                                        <div id="imagePreviewContainer" class="mt-3 d-none">
+                                            <label class="form-label small text-muted">New Images Preview:</label>
+                                            <div id="imagePreviews" class="d-flex flex-wrap gap-2"></div>
+                                        </div>
+                                        
+                                        @if (Model.Images != null && Model.Images.Any())
+                                        {
+                                            <div class="mt-3">
+                                                <label class="form-label small text-muted">Current Images:</label>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach (var image in Model.Images)
+                                                    {
+                                                        <div class="position-relative" style="width: 100px; height: 100px;">
+                                                            <img src="@Url.Content($"~/{image.FilePath.Replace("\\", "/")}")" 
+                                                                 class="img-thumbnail" 
+                                                                 style="width: 100%; height: 100%; object-fit: cover;" 
+                                                                 alt="@image.FileName" />
+                                                            <small class="d-block text-muted text-truncate" style="max-width: 100px;">
+                                                                @image.FileName
+                                                            </small>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label asp-for="Description" class="form-label">Description</label>
@@ -229,6 +266,71 @@
             }
         }
 
+        // Search address button
+        document.getElementById('searchAddressBtn').addEventListener('click', function() {
+            const btn = this;
+            const originalHtml = btn.innerHTML;
+            const address = document.getElementById('locationInput').value.trim();
+            
+            if (!address) {
+                alert('Please enter an address to search');
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Searching...';
+
+            // Use Nominatim geocoding API to find coordinates
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const result = data[0];
+                        const lat = parseFloat(result.lat);
+                        const lng = parseFloat(result.lon);
+                        
+                        // Set coordinates
+                        document.getElementById('Latitude').value = lat;
+                        document.getElementById('Longitude').value = lng;
+                        
+                        // Update location with the formatted address from geocoding
+                        document.getElementById('Location').value = result.display_name;
+                        
+                        // Update display
+                        updateCoordsDisplay(lat, lng);
+                        
+                        // Show success message
+                        const successDiv = document.createElement('div');
+                        successDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
+                        successDiv.innerHTML = `
+                            <i class="bi bi-check-circle"></i> Address found! Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        document.querySelector('.mb-4').appendChild(successDiv);
+                        setTimeout(() => successDiv.remove(), 5000);
+                    } else {
+                        alert('Address not found. Please try a different address or use "Use My Location" instead.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Geocoding error:', error);
+                    alert('Unable to search for address. Please try again or use "Use My Location" instead.');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                });
+        });
+
+        // Allow Enter key to trigger search
+        document.getElementById('locationInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('searchAddressBtn').click();
+            }
+        });
+
         // Use current location button
         document.getElementById('useLocationBtn').addEventListener('click', function() {
             const btn = this;
@@ -299,6 +401,24 @@
             );
         });
 
+        // Form validation - only require coordinates
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const lat = document.getElementById('Latitude').value;
+            const lng = document.getElementById('Longitude').value;
+            
+            if (!lat || !lng || lat === '0' || lng === '0') {
+                e.preventDefault();
+                alert('Please provide coordinates by using "Use My Location", searching for an address, or entering them manually.');
+                return;
+            }
+            
+            // Auto-generate location description if not provided
+            const location = document.getElementById('Location').value;
+            if (!location.trim()) {
+                document.getElementById('Location').value = `Location at ${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+            }
+        });
+
         // Initialize coordinates display on page load
         window.addEventListener('load', function() {
             const lat = document.getElementById('Latitude').value;
@@ -306,6 +426,56 @@
             if (lat && lng) {
                 updateCoordsDisplay(lat, lng);
             }
+        });
+
+        // Image file preview functionality
+        document.getElementById('ImageFiles').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewsDiv = document.getElementById('imagePreviews');
+            
+            // Clear previous previews
+            previewsDiv.innerHTML = '';
+            
+            if (files.length === 0) {
+                previewContainer.classList.add('d-none');
+                return;
+            }
+            
+            previewContainer.classList.remove('d-none');
+            
+            // Create preview for each file
+            Array.from(files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'position-relative';
+                        previewItem.style.width = '100px';
+                        previewItem.style.height = '100px';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-thumbnail';
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'cover';
+                        img.alt = file.name;
+                        
+                        const caption = document.createElement('small');
+                        caption.className = 'd-block text-muted text-truncate';
+                        caption.style.maxWidth = '100px';
+                        caption.textContent = file.name;
+                        
+                        previewItem.appendChild(img);
+                        previewItem.appendChild(caption);
+                        previewsDiv.appendChild(previewItem);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
         });
     </script>
 }

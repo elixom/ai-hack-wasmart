@@ -11,13 +11,23 @@ public class ReportsController : Controller
     private readonly IAuthService _authService;
     private readonly IEcoCreditService _ecoCreditService;
     private readonly IMapsService _mapsService;
+    private readonly IFileStorageService _fileStorageService;
+    private readonly ILogger<ReportsController> _logger;
 
-    public ReportsController(IReportService reportService, IAuthService authService, IEcoCreditService ecoCreditService, IMapsService mapsService)
+    public ReportsController(
+        IReportService reportService, 
+        IAuthService authService, 
+        IEcoCreditService ecoCreditService, 
+        IMapsService mapsService,
+        IFileStorageService fileStorageService,
+        ILogger<ReportsController> logger)
     {
         _reportService = reportService;
         _authService = authService;
         _ecoCreditService = ecoCreditService;
         _mapsService = mapsService;
+        _fileStorageService = fileStorageService;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()
@@ -58,6 +68,19 @@ public class ReportsController : Controller
             return View(model);
         }
 
+        // Validate image files if provided
+        if (Request.Form.Files.Count > 0)
+        {
+            foreach (var file in Request.Form.Files)
+            {
+                if (!_fileStorageService.IsValidImageFile(file))
+                {
+                    ModelState.AddModelError("ImageFiles", $"Invalid file type: {file.FileName}. Only JPG, PNG, GIF, and WebP images are allowed (max 10MB).");
+                    return View(model);
+                }
+            }
+        }
+
         var report = new Report
         {
             Location = model.Location,
@@ -73,6 +96,26 @@ public class ReportsController : Controller
         };
 
         var createdReport = await _reportService.CreateReportAsync(report);
+
+        // Handle image file uploads
+        if (Request.Form.Files.Count > 0)
+        {
+            try
+            {
+                var uploadedImages = await _fileStorageService.SaveImagesAsync(Request.Form.Files, createdReport.Id);
+                createdReport.Images.AddRange(uploadedImages);
+                
+                // Update report with images
+                await _reportService.UpdateReportAsync(createdReport.Id, createdReport);
+                
+                _logger.LogInformation("Uploaded {Count} images for report {ReportId}", uploadedImages.Count, createdReport.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading images for report {ReportId}", createdReport.Id);
+                TempData["Warning"] = "Report created but some images failed to upload.";
+            }
+        }
 
         // Award eco-credits for reporting
         await _ecoCreditService.AddCreditsAsync(
@@ -187,6 +230,19 @@ public class ReportsController : Controller
             return RedirectToAction("Details", new { id });
         }
 
+        // Validate image files if provided
+        if (Request.Form.Files.Count > 0)
+        {
+            foreach (var file in Request.Form.Files)
+            {
+                if (!_fileStorageService.IsValidImageFile(file))
+                {
+                    ModelState.AddModelError("ImageFiles", $"Invalid file type: {file.FileName}. Only JPG, PNG, GIF, and WebP images are allowed (max 10MB).");
+                    return View(report);
+                }
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             return View(report);
@@ -198,6 +254,24 @@ public class ReportsController : Controller
         report.Timestamp = existingReport.Timestamp;
         report.AssignedTruckId = existingReport.AssignedTruckId;
         report.CollectedAt = existingReport.CollectedAt;
+        report.Images = existingReport.Images; // Preserve existing images
+
+        // Handle new image file uploads
+        if (Request.Form.Files.Count > 0)
+        {
+            try
+            {
+                var uploadedImages = await _fileStorageService.SaveImagesAsync(Request.Form.Files, report.Id);
+                report.Images.AddRange(uploadedImages);
+                
+                _logger.LogInformation("Uploaded {Count} additional images for report {ReportId}", uploadedImages.Count, report.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading images for report {ReportId}", report.Id);
+                TempData["Warning"] = "Report updated but some images failed to upload.";
+            }
+        }
 
         var updatedReport = await _reportService.UpdateReportAsync(id, report);
         if (updatedReport == null)
