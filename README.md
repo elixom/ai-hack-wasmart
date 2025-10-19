@@ -8,7 +8,8 @@
 
 
 ### Live Demo
-https://greensync-app20251018204258-cyh7cfe6c2hfgnez.eastus2-01.azurewebsites.net/
+- App : https://greensync-app20251018204258-cyh7cfe6c2hfgnez.eastus2-01.azurewebsites.net/
+- Admin : https://greensync-admin20251019040658-g4bcfhe5hvfxa6e5.eastus2-01.azurewebsites.net/
 
 ### 🎯 Key Value Proposition
 - **20% Fuel Cost Reduction** through AI-optimized routing
