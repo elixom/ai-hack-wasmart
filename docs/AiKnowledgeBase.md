@@ -343,7 +343,157 @@ builder.Services.AddScoped<IAuthService, EfAuthService>();
 - Google/Microsoft SSO integration as specified in project requirements
 - Addition of spatial data types for advanced geographic queries
 - Integration of Azure OpenAI for enhanced route optimization
-- Real-time SignalR integration for live fleet tracking updates
+
+### SignalR Real-Time Communication Implementation - October 19, 2025
+
+#### Overview
+Complete SignalR implementation has been added to enable real-time communication between administrators and users in the GreenSync waste management platform.
+
+#### Architecture Components
+
+##### 1. NotificationHub
+- **Location**: `GreenSync-lib/Hubs/NotificationHub.cs`
+- **Purpose**: Central SignalR hub for managing real-time connections
+- **Key Features**:
+  - Automatic user grouping based on roles (AdminUsers, RegularUsers)
+  - Connection lifecycle management with logging
+  - Role-based authorization for admin functions
+  - Group management for targeted notifications
+
+##### 2. INotificationService Interface
+- **Location**: `GreenSync-lib/Services/INotificationService.cs`
+- **Purpose**: Abstraction layer for notification services
+- **Methods**:
+  - `SendAdminNotificationAsync`: Broadcast to all users
+  - `NotifyAdminsOfNewReportAsync`: Alert admins of new waste reports
+  - `NotifyUserOfReportStatusChangeAsync`: Update users on report progress
+  - `SendNotificationToUserAsync`: Targeted user notifications
+  - `SendNotificationToGroupAsync`: Group-based notifications
+
+##### 3. SignalRNotificationService
+- **Location**: `GreenSync-lib/Services/SignalRNotificationService.cs`
+- **Purpose**: SignalR implementation of notification service
+- **Features**:
+  - Comprehensive logging for all notification operations
+  - Error handling that doesn't fail critical operations
+  - Rich notification objects with metadata
+  - Support for different notification types (info, success, warning, danger)
+
+##### 4. Admin Notification Controller
+- **Location**: `GreenSync-app/Areas/Admin/Controllers/NotificationController.cs`
+- **Purpose**: Admin interface for sending notifications
+- **Actions**:
+  - `Send`: Form-based notification broadcasting
+  - `SendToGroup`: API endpoint for group notifications
+- **Security**: Role-based authorization (Administrator, Supervisor only)
+
+##### 5. Client-Side JavaScript Manager
+- **Location**: `GreenSync-app/wwwroot/js/signalr-notifications.js`
+- **Purpose**: Complete client-side notification management
+- **Features**:
+  - Automatic connection management with retry logic
+  - Toast notifications with Bootstrap styling
+  - Connection status indicators
+  - Notification persistence in localStorage
+  - Audio notification sounds
+  - XSS protection with HTML escaping
+
+#### Implementation Details
+
+##### Hub Configuration
+```csharp
+// Program.cs
+builder.Services.AddSignalR();
+app.MapHub<NotificationHub>("/notificationHub");
+```
+
+##### Service Registration
+```csharp
+builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
+```
+
+##### Client Connection
+- Automatic connection for authenticated users
+- Role-based group assignment
+- Reconnection logic with exponential backoff
+- Connection status monitoring
+
+##### Notification Types
+1. **Admin Notifications**: Broadcasts from administrators to all users
+2. **New Report Alerts**: Real-time alerts to admins when users create waste reports
+3. **Report Status Updates**: Notifications to users when report status changes
+4. **General Notifications**: System-wide announcements
+
+#### Integration Points
+
+##### Report Creation Flow
+- User creates waste report in ReportsController
+- Automatic notification sent to admin group via NotifyAdminsOfNewReportAsync
+- Rich notification includes report details, priority, location, and waste type
+- Admin receives toast notification and dashboard updates
+
+##### Admin Broadcasting
+- Admin accesses notification interface via `/Admin/Notification/Send`
+- Form-based interface with preview functionality
+- Support for different notification types and character limits
+- Real-time delivery to all connected users
+
+##### User Experience
+- Toast notifications appear in top-right corner
+- Automatic dismissal with configurable timing
+- Notification history stored locally
+- Audio alerts for important notifications
+- Connection status indicators
+
+#### Security Considerations
+- Authorization required for hub connections
+- Role-based message routing (AdminUsers/RegularUsers groups)
+- Anti-forgery token validation on admin forms
+- HTML escaping to prevent XSS attacks
+- Secure SignalR connection over HTTPS
+
+#### Performance Features
+- Automatic reconnection with exponential backoff
+- Connection pooling through SignalR infrastructure
+- Efficient group-based message routing
+- Client-side notification throttling
+- Selective script loading (authenticated users only)
+
+#### Error Handling
+- Comprehensive logging at all levels
+- Graceful degradation when SignalR unavailable
+- Non-blocking notification failures
+- Connection retry mechanisms
+- User feedback for connection issues
+
+#### Testing Scenarios
+1. **Admin Notification Broadcasting**:
+   - Admin sends notification via admin panel
+   - All connected users receive toast notification
+   - Notification appears in user's notification history
+
+2. **Waste Report Creation**:
+   - User creates new waste report
+   - Admin receives real-time notification with report details
+   - Admin can click notification to view dashboard
+
+3. **Connection Management**:
+   - Users automatically connect on page load
+   - Connection status displayed during reconnection attempts
+   - Automatic retry on connection failures
+
+#### Known Limitations
+- Layout file formatting issues from auto-formatting (functionality unaffected)
+- Requires SignalR JavaScript library from CDN
+- Basic audio notification implementation
+- No notification persistence beyond localStorage
+
+#### Future Enhancements
+- Push notifications for mobile devices
+- Advanced notification filtering and preferences
+- Notification templates and scheduling
+- Integration with email notifications
+- Analytics and notification delivery tracking
 
 ### Troubleshooting Common Issues
 
