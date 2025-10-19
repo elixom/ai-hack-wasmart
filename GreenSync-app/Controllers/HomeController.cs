@@ -24,12 +24,17 @@ public class HomeController : Controller
         _mapsService = mapsService;
     }
 
+    public IActionResult Landing()
+    {
+        return View();
+    }
+
     public async Task<IActionResult> Index()
     {
         var currentUser = await _authService.GetCurrentUserAsync();
         if (currentUser == null)
         {
-            return RedirectToAction("Login", "Auth");
+            return RedirectToAction("Landing");
         }
 
         // Get user's reports and eco-credits
@@ -48,6 +53,11 @@ public class HomeController : Controller
         };
 
         return View(viewModel);
+    }
+
+    public IActionResult About()
+    {
+        return View();
     }
 
     public IActionResult Privacy()

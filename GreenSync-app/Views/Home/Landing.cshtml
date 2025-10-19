@@ -1,0 +1,461 @@
+@{
+    ViewData["Title"] = "GreenSync - Smart Waste Management";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/landing.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-success" href="#">
+                <i class="bi bi-recycle"></i> GreenSync
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#impact">Impact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("About", "Home")">About Us</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-outline-success" href="@Url.Action("Login", "Auth")">Sign In</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="display-3 fw-bold mb-4">
+                            Transform Waste Collection with <span class="text-success">AI-Powered</span> Intelligence
+                        </h1>
+                        <p class="lead text-muted mb-4">
+                            A data-driven solution that revolutionizes waste management from a reactive necessity into a proactive, efficient, and sustainable service.
+                        </p>
+                        <div class="d-flex gap-3">
+                            <a href="#how-it-works" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-play-circle"></i> Learn More
+                            </a>
+                        </div>
+                        <div class="hero-stats mt-5">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-success">20%</h3>
+                                    <small class="text-muted">Cost Reduction</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-success">100%</h3>
+                                    <small class="text-muted">Real-Time</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-success">24/7</h3>
+                                    <small class="text-muted">AI Active</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <div class="floating-card">
+                            <i class="bi bi-cpu display-1 text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Comprehensive Platform Features</h2>
+                <p class="lead text-muted">Everything you need for intelligent waste management</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon bg-primary">
+                            <i class="bi bi-phone"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">User Engagement & Reporting</h3>
+                        <p class="text-muted mb-3">Empower residents and businesses with instant waste reporting capabilities.</p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Real-time photo reporting with geolocation</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Proactive collection alerts</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Live transparency dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-card featured">
+                        <div class="feature-badge">Most Advanced</div>
+                        <div class="feature-icon bg-success">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">AI-Powered Optimization</h3>
+                        <p class="text-muted mb-3">Machine learning algorithms that transform waste collection efficiency.</p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Predictive demand forecasting</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Dynamic route optimization</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Intelligent fleet orchestration</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon bg-warning">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Commercial Incentives</h3>
+                        <p class="text-muted mb-3">Drive behavioral change through rewards and compliance tracking.</p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check-circle-fill text-success"></i> On-demand pickup scheduling</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Eco-Credit rewards program</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Sustainability certifications</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Realtime Alerts & Reports Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Real-Time Intelligence & Reporting</h2>
+                <p class="lead text-muted">Stay informed and take action with instant notifications and comprehensive analytics</p>
+            </div>
+
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <div class="feature-icon bg-danger mb-3">
+                            <i class="bi bi-bell-fill"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Instant Alerts & Notifications</h3>
+                        <p class="text-muted mb-3">
+                            Never miss a critical event with our intelligent alert system that keeps you informed in real-time.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Waste overflow alerts sent instantly to collection teams</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Citizen notifications on scheduled pickups</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Real-time status updates on reported issues</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Emergency response notifications for urgent situations</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Collection completion confirmations with timestamps</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <div class="feature-icon bg-info mb-3">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Comprehensive Analytics & Reports</h3>
+                        <p class="text-muted mb-3">
+                            Make data-driven decisions with detailed reports and actionable insights from collected data.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Interactive dashboards with live metrics</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Historical trend analysis and predictions</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Route efficiency and cost analysis reports</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Community engagement statistics</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Environmental impact assessments</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability Goals Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-globe-americas text-success"></i> Contributing to Global Sustainability Goals
+                </h2>
+                <p class="lead text-muted">GreenSync directly supports the United Nations Sustainable Development Goals</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon bg-success mb-3 mx-auto" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                            <i class="bi bi-building display-5"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">SDG 11: Sustainable Cities</h4>
+                        <p class="text-muted">
+                            Making cities inclusive, safe, resilient, and sustainable through smart waste management that reduces pollution and improves urban living conditions.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon bg-primary mb-3 mx-auto" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                            <i class="bi bi-recycle display-5"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">SDG 12: Responsible Consumption</h4>
+                        <p class="text-muted">
+                            Ensuring sustainable consumption and production patterns by reducing waste generation through prevention, reduction, recycling, and reuse.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon bg-info mb-3 mx-auto" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                            <i class="bi bi-thermometer-sun display-5"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">SDG 13: Climate Action</h4>
+                        <p class="text-muted">
+                            Taking urgent action to combat climate change by reducing carbon emissions through optimized collection routes and promoting sustainable practices.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-2">
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-check2-circle text-success me-2"></i>Environmental Benefits</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Reduced greenhouse gas emissions from optimized routes</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Lower fuel consumption and operational costs</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Decreased urban pollution and cleaner neighborhoods</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Enhanced recycling rates through better tracking</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-people-fill text-success me-2"></i>Social Impact</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Improved public health through cleaner environments</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Increased community engagement and participation</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Creation of green jobs and economic opportunities</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle-fill text-success me-2"></i>Educational awareness on sustainability practices</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">How GreenSync Works</h2>
+                <p class="lead text-muted">Four simple steps to revolutionize your waste management</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <i class="bi bi-camera"></i>
+                        </div>
+                        <h4 class="fw-bold">Report</h4>
+                        <p class="text-muted">Citizens report waste pileups with photos and precise location data.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+                        <h4 class="fw-bold">Analyze</h4>
+                        <p class="text-muted">AI processes data to predict demand and optimize routes.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <h4 class="fw-bold">Collect</h4>
+                        <p class="text-muted">Fleet dispatched on optimized routes for maximum efficiency.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <h4 class="fw-bold">Reward</h4>
+                        <p class="text-muted">Users earn Eco-Credits for responsible waste management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="impact-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Transformative Impact</h2>
+                <p class="lead text-muted">Measurable improvements for municipalities and businesses</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="impact-card">
+                        <div class="impact-icon">
+                            <i class="bi bi-piggy-bank"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-success">20%</h3>
+                        <p class="fw-bold">Cost Reduction</p>
+                        <p class="text-muted small">Minimize fuel and operational expenses</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="impact-card">
+                        <div class="impact-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-success">2x</h3>
+                        <p class="fw-bold">Participation</p>
+                        <p class="text-muted small">Increased citizen engagement</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="impact-card">
+                        <div class="impact-icon">
+                            <i class="bi bi-tree"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-success">30%</h3>
+                        <p class="fw-bold">Lower Emissions</p>
+                        <p class="text-muted small">Reduced carbon footprint</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="impact-card">
+                        <div class="impact-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-success">100%</h3>
+                        <p class="fw-bold">Transparency</p>
+                        <p class="text-muted small">Real-time operational visibility</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="display-4 fw-bold mb-4">Ready to Transform Your Waste Management?</h2>
+                    <p class="lead text-muted mb-4">
+                        Join municipalities and businesses already benefiting from AI-powered waste collection.
+                    </p>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold text-success mb-3">
+                        <i class="bi bi-recycle"></i> GreenSync
+                    </h5>
+                    <p class="text-muted">
+                        AI-Powered Smart Waste & Resource Management Platform for a sustainable future.
+                    </p>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="fw-bold mb-3">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#impact">Impact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="fw-bold mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("About", "Home")">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="fw-bold mb-3">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="fw-bold mb-3">Legal</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("Privacy", "Home")">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-lg-12 text-center text-muted">
+                    <p>&copy; 2025 GreenSync. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
