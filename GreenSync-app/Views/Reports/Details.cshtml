@@ -225,15 +225,12 @@
                     </h5>
                 </div>
                 <div class="card-body p-0">
-                    <div id="reportMap" style="height: 250px; position: relative;">
-                        <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
-                            <i class="bi bi-geo-alt text-success" style="font-size: 3rem;"></i>
-                            <p class="text-muted mt-2 mb-0">@Model.Latitude.ToString("F4"), @Model.Longitude.ToString("F4")</p>
-                            <a href="https://www.google.com/maps?q=@Model.Latitude,@Model.Longitude" target="_blank" class="btn btn-sm btn-outline-success mt-2">
-                                <i class="bi bi-box-arrow-up-right"></i> Open in Google Maps
-                            </a>
-                        </div>
-                    </div>
+                    <div id="reportMap" style="height: 300px;"></div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://www.google.com/maps?q=@Model.Latitude,@Model.Longitude" target="_blank" class="btn btn-sm btn-outline-success w-100">
+                        <i class="bi bi-box-arrow-up-right"></i> Open in Google Maps
+                    </a>
                 </div>
             </div>
 
@@ -298,6 +295,9 @@
 </div>
 
 @section Styles {
+    <!-- Azure Maps Web SDK CSS -->
+    <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.css" type="text/css" />
+    
     <style>
         .timeline {
             position: relative;
@@ -333,4 +333,135 @@
             padding-left: 10px;
         }
     </style>
+}
+
+@section Scripts {
+    <!-- Azure Maps Web SDK -->
+    <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.js"></script>
+    
+    <script>
+        // Initialize Azure Maps for report location
+        (function() {
+            'use strict';
+
+            const subscriptionKey = '@ViewBag.AzureMapsSubscriptionKey';
+            const reportLocation = [@Model.Longitude, @Model.Latitude];
+            const locationName = '@Model.Location';
+
+            // Check if subscription key is available
+            if (!subscriptionKey || subscriptionKey === '') {
+                console.warn('Azure Maps subscription key not configured');
+                document.getElementById('reportMap').innerHTML = `
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                        <div class="text-center p-3">
+                            <i class="bi bi-geo-alt text-success" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2 mb-0">@Model.Latitude.ToString("F4"), @Model.Longitude.ToString("F4")</p>
+                            <small class="text-muted">Map preview unavailable - Azure Maps not configured</small>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Initialize the map
+                const map = new atlas.Map('reportMap', {
+                    center: reportLocation,
+                    zoom: 15,
+                    language: 'en-US',
+                    authOptions: {
+                        authType: 'subscriptionKey',
+                        subscriptionKey: subscriptionKey
+                    }
+                });
+
+                // Wait for map to be ready
+                map.events.add('ready', function() {
+                    // Add controls
+                    map.controls.add(new atlas.control.ZoomControl(), {
+                        position: 'top-right'
+                    });
+
+                    // Create data source for the marker
+                    const dataSource = new atlas.source.DataSource();
+                    map.sources.add(dataSource);
+
+                    // Create a point feature for the report location
+                    const point = new atlas.data.Feature(new atlas.data.Point(reportLocation), {
+                        title: locationName,
+                        description: 'Report Location'
+                    });
+
+                    dataSource.add(point);
+
+                    // Create symbol layer for the marker
+                    const symbolLayer = new atlas.layer.SymbolLayer(dataSource, null, {
+                        iconOptions: {
+                            image: 'marker-red',
+                            anchor: 'bottom',
+                            size: 0.8
+                        }
+                    });
+
+                    map.layers.add(symbolLayer);
+
+                    // Create popup
+                    const popup = new atlas.Popup({
+                        pixelOffset: [0, -18],
+                        closeButton: false
+                    });
+
+                    // Show popup on marker click
+                    map.events.add('click', symbolLayer, function(e) {
+                        if (e.shapes && e.shapes.length > 0) {
+                            const properties = e.shapes[0].getProperties();
+                            popup.setOptions({
+                                content: `
+                                    <div style="padding: 10px;">
+                                        <strong>${properties.title}</strong><br/>
+                                        <small class="text-muted">${properties.description}</small>
+                                    </div>
+                                `,
+                                position: e.shapes[0].getCoordinates()
+                            });
+                            popup.open(map);
+                        }
+                    });
+
+                    // Change cursor on hover
+                    map.events.add('mousemove', symbolLayer, function() {
+                        map.getCanvasContainer().style.cursor = 'pointer';
+                    });
+
+                    map.events.add('mouseout', symbolLayer, function() {
+                        map.getCanvasContainer().style.cursor = 'grab';
+                    });
+                });
+
+                // Handle map errors
+                map.events.add('error', function(error) {
+                    console.error('Map error:', error);
+                    document.getElementById('reportMap').innerHTML = `
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                            <div class="text-center p-3">
+                                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 2rem;"></i>
+                                <p class="text-muted mt-2 mb-0 small">Error loading map</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('reportMap').innerHTML = `
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                        <div class="text-center p-3">
+                            <i class="bi bi-geo-alt text-success" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2 mb-0">@Model.Latitude.ToString("F4"), @Model.Longitude.ToString("F4")</p>
+                        </div>
+                    </div>
+                `;
+            }
+        })();
+    </script>
 }

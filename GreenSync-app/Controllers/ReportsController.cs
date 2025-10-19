@@ -10,12 +10,14 @@ public class ReportsController : Controller
     private readonly IReportService _reportService;
     private readonly IAuthService _authService;
     private readonly IEcoCreditService _ecoCreditService;
+    private readonly IMapsService _mapsService;
 
-    public ReportsController(IReportService reportService, IAuthService authService, IEcoCreditService ecoCreditService)
+    public ReportsController(IReportService reportService, IAuthService authService, IEcoCreditService ecoCreditService, IMapsService mapsService)
     {
         _reportService = reportService;
         _authService = authService;
         _ecoCreditService = ecoCreditService;
+        _mapsService = mapsService;
     }
 
     public async Task<IActionResult> Index()
@@ -104,6 +106,9 @@ public class ReportsController : Controller
         {
             return Forbid();
         }
+
+        // Pass Azure Maps subscription key for map rendering
+        ViewBag.AzureMapsSubscriptionKey = _mapsService.GetSubscriptionKey();
 
         return View(report);
     }
