@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GreenSync.Lib.Services;
 using GreenSync.Lib.Models;
+using GreenSync_app.Models;
 
 namespace GreenSync_app.Controllers;
 
@@ -121,16 +122,4 @@ public class ReportsController : Controller
 
         return View(activeReports.OrderByDescending(r => r.Timestamp));
     }
-}
-
-public class CreateReportViewModel
-{
-    public string Location { get; set; } = string.Empty;
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public ReportPriority Priority { get; set; } = ReportPriority.Medium;
-    public double EstimatedVolume { get; set; }
-    public WasteType WasteType { get; set; } = WasteType.General;
-    public string? ImageUrl { get; set; }
 }

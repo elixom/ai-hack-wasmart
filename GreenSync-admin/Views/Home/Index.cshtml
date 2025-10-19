@@ -1,8 +1,284 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-success fw-bold mb-0">
+                        <i class="bi bi-speedometer2"></i> Fleet Management Dashboard
+                    </h2>
+                    <p class="text-muted">Municipal waste collection command center</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Optimize", "Route")" class="btn btn-success">
+                        <i class="bi bi-lightning"></i> Optimize Routes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold">@Model.TotalReports</h4>
+                            <p class="mb-0">Total Reports</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-file-earmark-text fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold">@Model.OpenReports</h4>
+                            <p class="mb-0">Open Reports</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-exclamation-triangle fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold">@Model.ActiveRoutes</h4>
+                            <p class="mb-0">Active Routes</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-truck fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold">@Model.CollectedReports</h4>
+                            <p class="mb-0">Collected Today</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-check-circle fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Fleet Status -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-truck"></i> Fleet Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Truck ID</th>
+                                    <th>Status</th>
+                                    <th>Driver</th>
+                                    <th>Fuel</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var truck in Model.MockTrucks)
+                                {
+                                    <tr>
+                                        <td><strong>@truck.Id</strong></td>
+                                        <td>
+                                            @switch (truck.Status)
+                                            {
+                                                case "Available":
+                                                    <span class="badge bg-success">@truck.Status</span>
+                                                    break;
+                                                case "In Progress":
+                                                    <span class="badge bg-primary">@truck.Status</span>
+                                                    break;
+                                                case "Maintenance":
+                                                    <span class="badge bg-warning">@truck.Status</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@truck.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@truck.Driver</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar @(truck.FuelLevel > 50 ? "bg-success" : truck.FuelLevel > 25 ? "bg-warning" : "bg-danger")" 
+                                                     style="width: @truck.FuelLevel%">@truck.FuelLevel%</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waste Hotspots -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-geo-alt-fill text-danger"></i> Predicted Waste Hotspots
+                    </h5>
+                    <span class="badge bg-danger">AI Powered</span>
+                </div>
+                <div class="card-body">
+                    @if (Model.HotspotReports.Any())
+                    {
+                        @foreach (var hotspot in Model.HotspotReports)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                <div>
+                                    <strong>@hotspot.Location</strong>
+                                    <br><small class="text-muted">@hotspot.WasteType - @hotspot.EstimatedVolume m³</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-@(hotspot.Priority == GreenSync.Lib.Models.ReportPriority.High ? "danger" : hotspot.Priority == GreenSync.Lib.Models.ReportPriority.Medium ? "warning" : "info")">
+                                        @hotspot.Priority
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="bi bi-check-circle text-success fs-2"></i>
+                            <p class="text-muted mt-2">No hotspots detected</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports and Active Routes -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> Recent Reports
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var report in Model.RecentReports)
+                                {
+                                    <tr>
+                                        <td>@report.Location</td>
+                                        <td>@report.WasteType</td>
+                                        <td>
+                                            <span class="badge bg-@(report.Priority == GreenSync.Lib.Models.ReportPriority.High ? "danger" : report.Priority == GreenSync.Lib.Models.ReportPriority.Medium ? "warning" : "info")">
+                                                @report.Priority
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-@(report.Status == GreenSync.Lib.Models.ReportStatus.Collected ? "success" : report.Status == GreenSync.Lib.Models.ReportStatus.Assigned ? "info" : "warning")">
+                                                @report.Status
+                                            </span>
+                                        </td>
+                                        <td>@report.Timestamp.ToString("HH:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- System Stats -->
+            <div class="card bg-light mb-3">
+                <div class="card-body text-center">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-graph-up"></i> System Performance
+                    </h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="text-success">18%</h4>
+                            <small class="text-muted">Avg Fuel Savings</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success">@Model.TotalEcoCredits</h4>
+                            <small class="text-muted">Eco-Credits Issued</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Optimize", "Route")" class="btn btn-success">
+                            <i class="bi bi-lightning"></i> Optimize New Route
+                        </a>
+                        <a href="@Url.Action("Index", "Route")" class="btn btn-outline-primary">
+                            <i class="bi bi-list"></i> View All Routes
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="refreshDashboard()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+function refreshDashboard() {
+    location.reload();
+}
+</script>

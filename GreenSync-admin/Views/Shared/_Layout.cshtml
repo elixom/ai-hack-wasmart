@@ -3,45 +3,166 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GreenSync_admin</title>
+    <title>@ViewData["Title"] - GreenSync Admin</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GreenSync_admin.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GreenSync_admin</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-shield-check"></i> GreenSync Admin
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-truck"></i> Fleet Management
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-list"></i> All Vehicles
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-tools"></i> Maintenance
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-fuel-pump"></i> Fuel Tracking
+                                </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-route"></i> Route Optimization
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Route" asp-action="Optimize">
+                                    <i class="bi bi-lightning"></i> Optimize New Route
+                                </a></li>
+                                <li><a class="dropdown-item" asp-controller="Route" asp-action="Index">
+                                    <i class="bi bi-list-ul"></i> All Routes
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-graph-up"></i> Performance Analytics
+                                </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-file-earmark-text"></i> Reports
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-list-check"></i> All Reports
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-geo-alt-fill"></i> Hotspot Analysis
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-clock-history"></i> Report History
+                                </a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-people"></i> Users
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> Admin
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><h6 class="dropdown-header">Administrator</h6></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-gear"></i> Settings
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="bi bi-bar-chart"></i> System Reports
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" asp-controller="Auth" asp-action="Logout" class="d-inline">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="container-fluid">
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="container-fluid">
+            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    }
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">
-            &copy; 2025 - GreenSync_admin - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary"><i class="bi bi-shield-check"></i> GreenSync Admin</h5>
+                    <p class="text-muted">Municipal Waste Management Control Center</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>System Status</h6>
+                    <ul class="list-unstyled">
+                        <li><span class="badge bg-success">✓</span> AI Engine: Online</li>
+                        <li><span class="badge bg-success">✓</span> Fleet Tracking: Active</li>
+                        <li><span class="badge bg-success">✓</span> Route Optimization: Ready</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="text-muted">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="text-muted mb-0">&copy; 2025 GreenSync Admin Portal - AI-Powered Fleet Management</p>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
