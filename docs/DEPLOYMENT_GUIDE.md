@@ -53,7 +53,7 @@ Username: admin        | Password: admin123
 ### For Citizens & Commercial Users
 
 1. **Access Portal**: Navigate to `http://localhost:5000`
-2. **Login**: Use demo credentials (john.doe / password123)
+2. **Login**: Use demo credentials (see below)
 3. **Report Waste**: 
    - Click "Report Waste" button
    - Fill location and waste details

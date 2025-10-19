@@ -122,9 +122,10 @@ GreenSync/
 
 #### User Accounts (GreenSync-app)
 ```
-Username: john.doe     | Password: password123
-Username: jane.smith   | Password: password123
-Username: mike.wilson  | Password: password123
+Admin User: admin@greensync.jm | Password: password123
+Driver User: marcus.brown@greensync.jm, keisha.campbell@greensync.jm 
+Residential User: devon.williams@gmail.com, sophia.johnson@yahoo.com | Password: password123
+Commercial User: manager@jamaicaplaza.jm | Password: password123
 ```
 
 #### Administrator Account (GreenSync-admin)
