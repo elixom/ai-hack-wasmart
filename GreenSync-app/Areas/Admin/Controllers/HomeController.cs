@@ -72,7 +72,7 @@ public class HomeController : Controller
 
     public IActionResult Privacy()
     {
-        return View();
+        return View("~/Home/Privacy.cshtml");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
