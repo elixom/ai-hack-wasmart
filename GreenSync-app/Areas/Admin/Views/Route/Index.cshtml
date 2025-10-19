@@ -1,0 +1,317 @@
+@model IEnumerable<GreenSync.Lib.Models.Route>
+@{
+    ViewData["Title"] = "Route Management";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-primary fw-bold mb-0">
+                        <i class="bi bi-route"></i> Route Management
+                    </h2>
+                    <p class="text-muted">Monitor and manage all collection routes</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Optimize")" class="btn btn-success">
+                        <i class="bi bi-lightning"></i> Create Optimized Route
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Route Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle fs-2 mb-2"></i>
+                    <h4>@Model.Count(r => r.Status == GreenSync.Lib.Models.RouteStatus.Completed)</h4>
+                    <small>Completed Routes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-truck fs-2 mb-2"></i>
+                    <h4>@Model.Count(r => r.Status == GreenSync.Lib.Models.RouteStatus.InProgress)</h4>
+                    <small>In Progress</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-clock fs-2 mb-2"></i>
+                    <h4>@Model.Count(r => r.Status == GreenSync.Lib.Models.RouteStatus.Planned)</h4>
+                    <small>Planned Routes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-fuel-pump fs-2 mb-2"></i>
+                    <h4>@(Model.Any() ? Math.Round(Model.Average(r => r.FuelSavingsMetric), 1) : 0)%</h4>
+                    <small>Avg Fuel Savings</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list"></i> All Routes (@Model.Count())
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Route Name</th>
+                                        <th>Status</th>
+                                        <th>Truck Assigned</th>
+                                        <th>Stops</th>
+                                        <th>Distance</th>
+                                        <th>Fuel Savings</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var route in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@route.Name</strong>
+                                                <br><small class="text-muted">@route.OptimizationAlgorithm</small>
+                                            </td>
+                                            <td>
+                                                @switch (route.Status)
+                                                {
+                                                    case GreenSync.Lib.Models.RouteStatus.Planned:
+                                                        <span class="badge bg-warning">Planned</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.RouteStatus.Assigned:
+                                                        <span class="badge bg-info">Assigned</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.RouteStatus.InProgress:
+                                                        <span class="badge bg-primary">In Progress</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.RouteStatus.Completed:
+                                                        <span class="badge bg-success">Completed</span>
+                                                        break;
+                                                    case GreenSync.Lib.Models.RouteStatus.Cancelled:
+                                                        <span class="badge bg-danger">Cancelled</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(route.AssignedTruckId))
+                                                {
+                                                    <span class="badge bg-secondary">@route.AssignedTruckId</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Unassigned</span>
+                                                }
+                                            </td>
+                                            <td>@route.NumberOfStops</td>
+                                            <td>@route.TotalDistance km</td>
+                                            <td>
+                                                <span class="text-success fw-bold">@route.FuelSavingsMetric%</span>
+                                            </td>
+                                            <td>@route.CreatedAt.ToString("MMM dd, HH:mm")</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("Details", new { id = route.Id })" class="btn btn-outline-primary btn-sm">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    @if (route.Status == GreenSync.Lib.Models.RouteStatus.Planned)
+                                                    {
+                                                        <button class="btn btn-outline-success btn-sm" onclick="assignTruck('@route.Id')">
+                                                            <i class="bi bi-truck"></i>
+                                                        </button>
+                                                    }
+                                                    @if (route.Status == GreenSync.Lib.Models.RouteStatus.InProgress)
+                                                    {
+                                                        <button class="btn btn-outline-warning btn-sm" onclick="completeRoute('@route.Id')">
+                                                            <i class="bi bi-check-circle"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-route display-1 text-muted"></i>
+                            <h5 class="mt-3 text-muted">No routes found</h5>
+                            <p class="text-muted">Create your first optimized route to get started.</p>
+                            <a href="@Url.Action("Optimize")" class="btn btn-success">
+                                <i class="bi bi-lightning"></i> Create Optimized Route
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Route Performance Summary -->
+    @if (Model.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="text-primary mb-3">
+                            <i class="bi bi-graph-up"></i> Performance Summary
+                        </h6>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <h4 class="text-success">@Model.Sum(r => r.NumberOfStops)</h4>
+                                <small class="text-muted">Total Collection Points</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-success">@Math.Round(Model.Sum(r => r.TotalDistance), 1) km</h4>
+                                <small class="text-muted">Total Distance Optimized</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-success">@Math.Round(Model.Sum(r => (double)r.EstimatedFuelCost), 2)</h4>
+                                <small class="text-muted">Total Fuel Cost Saved ($)</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-success">@Math.Round(Model.Average(r => r.EfficiencyScore), 1)</h4>
+                                <small class="text-muted">Average Efficiency Score</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Assign Truck Modal -->
+<div class="modal fade" id="assignTruckModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Truck to Route</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignTruckForm">
+                    <input type="hidden" id="routeId" />
+                    <div class="mb-3">
+                        <label class="form-label">Select Truck</label>
+                        <select class="form-select" id="truckSelect" required>
+                            <option value="">Choose a truck...</option>
+                            <option value="TRUCK001">TRUCK001 - Available</option>
+                            <option value="TRUCK002">TRUCK002 - Available</option>
+                            <option value="TRUCK003">TRUCK003 - Maintenance</option>
+                            <option value="TRUCK004">TRUCK004 - Available</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Driver (Optional)</label>
+                        <input type="text" class="form-control" id="driverInput" placeholder="Enter driver name">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmAssignTruck()">Assign Truck</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function assignTruck(routeId) {
+    document.getElementById('routeId').value = routeId;
+    const modal = new bootstrap.Modal(document.getElementById('assignTruckModal'));
+    modal.show();
+}
+
+function confirmAssignTruck() {
+    const routeId = document.getElementById('routeId').value;
+    const truckId = document.getElementById('truckSelect').value;
+    const driverId = document.getElementById('driverInput').value;
+
+    if (!truckId) {
+        alert('Please select a truck');
+        return;
+    }
+
+    fetch('/Route/AssignTruck', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: routeId,
+            truckId: truckId,
+            driverId: driverId || null
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Truck assigned successfully!');
+            location.reload();
+        } else {
+            alert('Failed to assign truck: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while assigning the truck.');
+    });
+}
+
+function completeRoute(routeId) {
+    if (confirm('Mark this route as completed?')) {
+        fetch('/Route/UpdateStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: routeId,
+                status: 'Completed'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Route marked as completed!');
+                location.reload();
+            } else {
+                alert('Failed to update route: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the route.');
+        });
+    }
+}
+</script>
