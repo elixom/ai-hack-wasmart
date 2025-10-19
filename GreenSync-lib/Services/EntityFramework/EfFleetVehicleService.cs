@@ -19,7 +19,7 @@ public class EfFleetVehicleService : IFleetVehicleService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<FleetVehicle>> GetAllVehiclesAsync()
+    public async Task<List<FleetVehicle>> GetAllVehiclesAsync()
     {
         try
         {

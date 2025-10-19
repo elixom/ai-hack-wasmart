@@ -336,25 +336,20 @@ public class EfRouteService : IRouteService
     {
         var optimizedReports = OptimizeWaypointOrder(reports);
         var waypoints = new List<RouteWaypoint>();
-        DateTime? startDt = route.StartedAt.HasValue ? route.StartedAt.Value.AddMinutes(5) : null;
 
         for (int i = 0; i < optimizedReports.Count; i++)
         {
             var report = optimizedReports[i];
-            var min = CalculateEstimatedArrival(i, optimizedReports);
-            if (startDt.HasValue)
-            {
-                startDt = startDt.Value.AddMinutes(min);
-            }
-                waypoints.Add(new RouteWaypoint
+            var estimatedMinutes = CalculateEstimatedArrival(i, optimizedReports);
+            
+            waypoints.Add(new RouteWaypoint
             {
                 RouteId = route.Id,
                 Latitude = report.Latitude,
                 Longitude = report.Longitude,
                 Address = report.Location,
                 StopOrder = i + 1,
-                EstimatedArrivalMinutes =min,
-                EstimatedArrival = startDt,
+                EstimatedArrivalMinutes = estimatedMinutes,
                 ReportId = report.Id,
                 IsCompleted = false
             });

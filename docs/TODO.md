@@ -36,7 +36,7 @@
 - [ ] Create `Data/Services/` folder in GreenSync-lib
 - [ ] Implement `EfReportService : IReportService`
 - [ ] Implement `EfEcoCreditService : IEcoCreditService`
-- [ ] Implement `EfRouteService : IRouteService`
+- [x] **COMPLETED**: Implement `EfRouteService : IRouteService` - Fixed EstimatedArrival column issue (Oct 19, 2025)
 - [ ] Implement `EfFleetVehicleService : IFleetVehicleService`
 - [ ] Create repository base classes for common operations
 - [ ] Add proper error handling and logging
@@ -129,6 +129,7 @@
 ### Known Issues to Address
 
 #### Technical Debt
+- [x] **RESOLVED**: Fixed RouteWaypoint EstimatedArrival column issue in GetAllRoutesAsync() - Removed redundant property (Oct 19, 2025)
 - [ ] **URGENT**: Fix FleetVehicle.cs compilation errors (Route type references)
 - [ ] Resolve any circular dependency issues in Entity Framework models
 - [ ] Update existing view models to work with GUID identifiers instead of strings

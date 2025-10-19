@@ -26,7 +26,7 @@ public class AuthController : Controller
     {
         var user = await _authService.LoginAsync(username, password);
         
-        if (user != null && user.User?.Role == UserRole.Admin)
+        if ( User.IsInRole("Administrator"))
         {
             
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

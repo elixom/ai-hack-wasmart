@@ -118,21 +118,21 @@
                                         <td>
                                             @switch (truck.Status)
                                             {
-                                                case "Available":
-                                                    <span class="badge bg-success">@truck.Status</span>
+                                                case VehicleStatus.Available:
+                                                    <span class="badge bg-success">Available</span>
                                                     break;
-                                                case "In Progress":
-                                                    <span class="badge bg-primary">@truck.Status</span>
+                                                case VehicleStatus.InUse:
+                                                    <span class="badge bg-primary">In Progress</span>
                                                     break;
-                                                case "Maintenance":
-                                                    <span class="badge bg-warning">@truck.Status</span>
+                                                case VehicleStatus.Maintenance:
+                                                    <span class="badge bg-warning">Maintenance</span>
                                                     break;
                                                 default:
                                                     <span class="badge bg-secondary">@truck.Status</span>
                                                     break;
                                             }
                                         </td>
-                                        <td>@truck.Driver</td>
+                                        <td>@truck.AssignedDriver.FullName</td>
                                         <td>
                                             <div class="progress" style="height: 20px;">
                                                 <div class="progress-bar @(truck.FuelLevel > 50 ? "bg-success" : truck.FuelLevel > 25 ? "bg-warning" : "bg-danger")" 

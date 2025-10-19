@@ -87,14 +87,6 @@
                                                     <small class="text-muted">@waypoint.Latitude.ToString("F4"), @waypoint.Longitude.ToString("F4")</small>
                                                 </td>
                                                 <td>
-                                                    @if (waypoint.EstimatedArrival.HasValue)
-                                                    {
-                                                        <span class="badge bg-secondary">@waypoint.EstimatedArrival.Value.ToString(@"hh\:mm")</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted">-</span>
-                                                    }
                                                 </td>
                                             </tr>
                                         }

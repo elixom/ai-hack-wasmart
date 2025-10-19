@@ -15,16 +15,18 @@ public class HomeController : Controller
     private readonly IRouteService _routeService;
     private readonly IEcoCreditService _ecoCreditService;
     private readonly IAuthService _authService;
+    private readonly IFleetVehicleService _fleetVehicleService;
 
-    public HomeController(ILogger<HomeController> logger, IReportService reportService, 
-                         IRouteService routeService, IEcoCreditService ecoCreditService, 
-                         IAuthService authService)
+    public HomeController(ILogger<HomeController> logger, IReportService reportService,
+                         IRouteService routeService, IEcoCreditService ecoCreditService,
+                         IAuthService authService, IFleetVehicleService fleetVehicleService)
     {
         _logger = logger;
         _reportService = reportService;
         _routeService = routeService;
         _ecoCreditService = ecoCreditService;
         _authService = authService;
+        _fleetVehicleService = fleetVehicleService;
     }
 
     public async Task<IActionResult> Index()
@@ -58,13 +60,7 @@ public class HomeController : Controller
             HotspotReports = hotspotReports.Take(10).ToList(),
             ActiveRoutesList = activeRoutes.ToList(),
             
-            MockTrucks = new List<MockTruck>
-            {
-                new() { Id = "TRUCK001", Status = "In Progress", Driver = "John Smith", Location = "Downtown Area", FuelLevel = 75 },
-                new() { Id = "TRUCK002", Status = "Available", Driver = "Maria Garcia", Location = "Depot", FuelLevel = 90 },
-                new() { Id = "TRUCK003", Status = "Maintenance", Driver = "Bob Wilson", Location = "Service Center", FuelLevel = 45 },
-                new() { Id = "TRUCK004", Status = "In Progress", Driver = "Sarah Davis", Location = "Residential Zone", FuelLevel = 60 }
-            }
+            MockTrucks = await _fleetVehicleService.GetAllVehiclesAsync(),
         };
 
         return View(viewModel);

@@ -4,7 +4,7 @@ namespace GreenSync.Lib.Services;
 
 public interface IFleetVehicleService
 {
-    Task<IEnumerable<FleetVehicle>> GetAllVehiclesAsync();
+    Task<List<FleetVehicle>> GetAllVehiclesAsync();
     Task<FleetVehicle?> GetVehicleByIdAsync(Guid id);
     Task<IEnumerable<FleetVehicle>> GetVehiclesByStatusAsync(VehicleStatus status);
     Task<IEnumerable<FleetVehicle>> GetAvailableVehiclesAsync();

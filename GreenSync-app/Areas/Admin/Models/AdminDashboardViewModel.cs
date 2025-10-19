@@ -18,14 +18,5 @@ public class AdminDashboardViewModel
     public List<Report> RecentReports { get; set; } = new();
     public List<Report> HotspotReports { get; set; } = new();
     public List<GreenSync.Lib.Models.Route> ActiveRoutesList { get; set; } = new();
-    public List<MockTruck> MockTrucks { get; set; } = new();
-}
-
-public class MockTruck
-{
-    public string Id { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
-    public string Driver { get; set; } = string.Empty;
-    public string Location { get; set; } = string.Empty;
-    public int FuelLevel { get; set; }
+    public List<FleetVehicle> MockTrucks { get; set; } = new();
 }
