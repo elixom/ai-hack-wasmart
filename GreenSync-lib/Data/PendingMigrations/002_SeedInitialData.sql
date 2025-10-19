@@ -41,19 +41,19 @@ VALUES
 INSERT INTO [dbo].[UserRoles] ([UserId], [RoleId])
 VALUES 
     (@AdminUserId, 'A1B2C3D4-E5F6-7890-ABCD-EF1234567890'), -- Administrator role
-    (@DriverUserId1, 'C3D4E5F6-G7H8-9012-CDEF-345678901234'), -- Driver role
-    (@DriverUserId2, 'C3D4E5F6-G7H8-9012-CDEF-345678901234'), -- Driver role
-    (@ResidentUserId1, 'B2C3D4E5-F6G7-8901-BCDE-F23456789012'), -- User role
-    (@ResidentUserId2, 'B2C3D4E5-F6G7-8901-BCDE-F23456789012'), -- User role
-    (@CommercialUserId1, 'B2C3D4E5-F6G7-8901-BCDE-F23456789012'); -- User role
+    (@DriverUserId1, 'C3D4E5F6-A7B8-9012-CDEF-345678901234'), -- Driver role
+    (@DriverUserId2, 'C3D4E5F6-A7B8-9012-CDEF-345678901234'), -- Driver role
+    (@ResidentUserId1, 'B2C3D4E5-F6A7-8901-BCDE-F23456789012'), -- User role
+    (@ResidentUserId2, 'B2C3D4E5-F6A7-8901-BCDE-F23456789012'), -- User role
+    (@CommercialUserId1, 'B2C3D4E5-F6A7-8901-BCDE-F23456789012'); -- User role
 
 -- =====================================================================================================
 -- SEED FLEET VEHICLES (Jamaica-appropriate waste collection trucks)
 -- =====================================================================================================
 
-DECLARE @Vehicle1Id UNIQUEIDENTIFIER = 'V1A2B3C4-D5E6-7890-ABCD-EF1234567890';
-DECLARE @Vehicle2Id UNIQUEIDENTIFIER = 'V2A2B3C4-D5E6-7890-ABCD-EF1234567891';
-DECLARE @Vehicle3Id UNIQUEIDENTIFIER = 'V3A2B3C4-D5E6-7890-ABCD-EF1234567892';
+DECLARE @Vehicle1Id UNIQUEIDENTIFIER = 'A1A2B3C4-D5E6-7890-ABCD-EF1234567890';
+DECLARE @Vehicle2Id UNIQUEIDENTIFIER = 'A2A2B3C4-D5E6-7890-ABCD-EF1234567891';
+DECLARE @Vehicle3Id UNIQUEIDENTIFIER = 'A3A2B3C4-D5E6-7890-ABCD-EF1234567892';
 
 INSERT INTO [dbo].[FleetVehicles] ([Id], [LicensePlate], [Make], [Model], [Year], [VIN], [Status], [Capacity], [FuelLevel], [Mileage], [CurrentLatitude], [CurrentLongitude], [LastGPSUpdate], [AssignedDriverId], [CreatedAt])
 VALUES 
@@ -131,8 +131,8 @@ UPDATE [dbo].[FleetVehicles] SET [NextMaintenanceDate] = DATEADD(day, 90, GETUTC
 -- SEED SAMPLE ROUTES (Optimized Jamaica routes)
 -- =====================================================================================================
 
-DECLARE @Route1Id UNIQUEIDENTIFIER = 'R1A2B3C4-D5E6-7890-ABCD-EF1234567890';
-DECLARE @Route2Id UNIQUEIDENTIFIER = 'R2A2B3C4-D5E6-7890-ABCD-EF1234567891';
+DECLARE @Route1Id UNIQUEIDENTIFIER = 'E1A2B3C4-D5E6-7890-ABCD-EF1234567890';
+DECLARE @Route2Id UNIQUEIDENTIFIER = 'E2A2B3C4-D5E6-7890-ABCD-EF1234567891';
 
 INSERT INTO [dbo].[Routes] ([Id], [Name], [Duration], [FuelSavingsMetric], [TotalDistance], [EstimatedFuelCost], [NumberOfStops], [AssignedVehicleId], [DriverId], [Status], [OptimizationAlgorithm], [EfficiencyScore], [CreatedAt])
 VALUES 
