@@ -1,9 +1,55 @@
 using GreenSync.Lib.Services;
+using GreenSync.Lib.Data;
+using GreenSync.Lib.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add Entity Framework and Database Context
+builder.Services.AddDbContext<GreenSyncDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+});
+
+// Add ASP.NET Core Identity with custom user
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+{
+    // Password settings
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 8;
+    
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+    
+    // User settings
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<GreenSyncDbContext>()
+.AddDefaultTokenProviders();
+
+// Configure Identity Cookie settings for admin
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(120); // Longer session for admin
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.Name = "GreenSyncAdmin"; // Different cookie name for admin
+});
 
 // Add session support
 builder.Services.AddDistributedMemoryCache();
@@ -17,7 +63,8 @@ builder.Services.AddSession(options =>
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
-// Register our services (shared instances with user app)
+// Register our services
+// TODO: Replace with Entity Framework implementations
 builder.Services.AddSingleton<IReportService, InMemoryReportService>();
 builder.Services.AddSingleton<IEcoCreditService, InMemoryEcoCreditService>();
 builder.Services.AddSingleton<IRouteService, InMemoryRouteService>();

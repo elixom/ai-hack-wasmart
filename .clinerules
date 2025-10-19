@@ -201,3 +201,4 @@ The design should be:
 - the main user interface goes in the GreenSync-app project
 - admistrative functions go in the admin area of the  GreenSync-app project
 - You may create new files as you see fit but always ask before editing or replacing existing files.
+- DO NOT read or edit anything in the GreenSync-admin
