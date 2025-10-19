@@ -495,6 +495,33 @@ builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
 - Integration with email notifications
 - Analytics and notification delivery tracking
 
+### Package Dependency Resolution - October 19, 2025
+
+#### SignalR Package Dependencies Fixed
+- **Issue**: Build errors with `Microsoft.AspNetCore.SignalR.Core` version 9.0.0 package not found
+- **Root Cause**: In .NET 9.0, SignalR is included as part of the ASP.NET Core framework rather than a separate NuGet package
+- **Resolution**: Removed explicit `Microsoft.AspNetCore.SignalR.Core` package reference from GreenSync-lib.csproj
+- **Result**: SignalR functionality provided through `FrameworkReference Include="Microsoft.AspNetCore.App"`
+
+#### Package Configuration (Post-Fix)
+```xml
+<!-- GreenSync-lib.csproj - No longer needed for .NET 9.0 -->
+<!-- <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="9.0.0" /> -->
+
+<!-- SignalR included via framework reference -->
+<FrameworkReference Include="Microsoft.AspNetCore.App" />
+```
+
+#### Build Status
+- ✅ `dotnet restore` completed successfully
+- ✅ `dotnet build` executed without SignalR dependency errors
+- ✅ All SignalR functionality remains intact via framework reference
+
+#### Best Practices for .NET 9.0 SignalR
+- Use `FrameworkReference Include="Microsoft.AspNetCore.App"` for ASP.NET Core features
+- Avoid explicit SignalR package references in .NET 9.0 projects
+- SignalR client libraries still require separate packages for JavaScript/TypeScript clients
+
 ### Troubleshooting Common Issues
 
 #### Connection Issues
