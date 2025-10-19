@@ -1,7 +1,7 @@
 # Project Tech Stack and Rules - GreenSync
 
 ## Tech Stack
-- **Framework**: .NET 9.0, ASP.NET Core MVC
+- **Framework**: .NET 9.0, ASP.NET Core MVC (NO blazor/razor)
 - **Language**: C# 12
 - **Database**: Azure SQL Server, Entity Framework Core 
 - **Authentication**: ASP.NET Core Identity with Google/Microsoft SSO
@@ -65,7 +65,7 @@
 ### Database
 - Use  SQL (TSQL for SqlServer) script-base migrations
 - Place SQL scripts in Data/PendingMigrations
-- Use GUID (UUID) for primary keys
+- Use GUID (UID) for primary keys
 - Implement soft delete where appropriate
 - Use appropriate indexes
 - Include relevant DataAnnotations

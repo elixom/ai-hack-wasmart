@@ -1,0 +1,203 @@
+@model GreenSync.Lib.Models.EcoCredit
+@{
+    ViewData["Title"] = "Eco-Credits";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-success fw-bold mb-0">
+                        <i class="bi bi-coin"></i> Eco-Credits
+                    </h2>
+                    <p class="text-muted">Your environmental stewardship rewards</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Redeem")" class="btn btn-success">
+                        <i class="bi bi-gift"></i> Redeem Credits
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Current Balance -->
+        <div class="col-lg-4 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-wallet2 fs-1 mb-3"></i>
+                    <h2 class="fw-bold">@Model.CurrentBalance</h2>
+                    <p class="mb-0">Current Balance</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Earned -->
+        <div class="col-lg-4 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-arrow-up-circle fs-1 mb-3"></i>
+                    <h2 class="fw-bold">@Model.TotalEarned</h2>
+                    <p class="mb-0">Total Earned</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Redeemed -->
+        <div class="col-lg-4 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-arrow-down-circle fs-1 mb-3"></i>
+                    <h2 class="fw-bold">@Model.TotalRedeemed</h2>
+                    <p class="mb-0">Total Redeemed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- How to Earn Credits -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightbulb"></i> How to Earn Eco-Credits
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-file-earmark-plus text-success"></i>
+                                <strong>Submit Waste Report</strong>
+                                <br><small class="text-muted">Report waste that needs collection</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">10 Credits</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-recycle text-success"></i>
+                                <strong>Recycling Bonus</strong>
+                                <br><small class="text-muted">Report recyclable materials</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">15 Credits</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-check-circle text-success"></i>
+                                <strong>Report Collected</strong>
+                                <br><small class="text-muted">Your report is successfully collected</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">5 Credits</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-calendar-check text-success"></i>
+                                <strong>Monthly Bonus</strong>
+                                <br><small class="text-muted">Active participation each month</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">25 Credits</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> Recent Transactions
+                    </h5>
+                    <a href="@Url.Action("History")" class="btn btn-outline-primary btn-sm">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.TransactionHistory.Any())
+                    {
+                        @foreach (var transaction in Model.TransactionHistory.Take(5))
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                <div>
+                                    <div class="fw-bold">
+                                        @if (transaction.Amount > 0)
+                                        {
+                                            <span class="text-success">+@transaction.Amount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">@transaction.Amount</span>
+                                        }
+                                    </div>
+                                    <small class="text-muted">@transaction.Description</small>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">@transaction.TransactionDate.ToString("MMM dd")</small>
+                                    <br>
+                                    @switch (transaction.Type)
+                                    {
+                                        case GreenSync.Lib.Models.TransactionType.Earned:
+                                            <span class="badge bg-success">Earned</span>
+                                            break;
+                                        case GreenSync.Lib.Models.TransactionType.Redeemed:
+                                            <span class="badge bg-primary">Redeemed</span>
+                                            break;
+                                        case GreenSync.Lib.Models.TransactionType.Bonus:
+                                            <span class="badge bg-warning">Bonus</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@transaction.Type</span>
+                                            break;
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox display-6 text-muted"></i>
+                            <p class="text-muted mt-2">No transactions yet</p>
+                            <a href="@Url.Action("Create", "Reports")" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Start Earning
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Impact -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-tree"></i> Your Environmental Impact
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Model.TotalEarned / 10)</h4>
+                            <small class="text-muted">Reports Submitted</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round((double)Model.TotalEarned * 0.5, 1))</h4>
+                            <small class="text-muted">kg CO2 Saved</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round((double)Model.TotalEarned * 0.02, 1))</h4>
+                            <small class="text-muted">Trees Equivalent</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">@(Math.Round((double)Model.TotalEarned * 1.5, 0))</h4>
+                            <small class="text-muted">Liters Water Saved</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

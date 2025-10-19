@@ -1,0 +1,142 @@
+@model CreateReportViewModel
+@{
+    ViewData["Title"] = "Report Waste";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-plus-circle"></i> Report Waste
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Help us keep your community clean by reporting waste that needs collection.</p>
+                    
+                    <form method="post" asp-action="Create">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Location" class="form-label">Location <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <input asp-for="Location" class="form-control" placeholder="e.g., Main Street, Downtown" required>
+                                </div>
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label for="Latitude" class="form-label">Latitude</label>
+                                <input asp-for="Latitude" class="form-control" step="any" placeholder="4.6097">
+                                <span asp-validation-for="Latitude" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label for="Longitude" class="form-label">Longitude</label>
+                                <input asp-for="Longitude" class="form-control" step="any" placeholder="-74.0817">
+                                <span asp-validation-for="Longitude" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe the waste situation (e.g., overflowing containers, scattered debris)"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="WasteType" class="form-label">Waste Type</label>
+                                <select asp-for="WasteType" class="form-select">
+                                    <option value="General">General Waste</option>
+                                    <option value="Recyclable">Recyclable</option>
+                                    <option value="Organic">Organic</option>
+                                    <option value="Hazardous">Hazardous</option>
+                                    <option value="Electronic">Electronic</option>
+                                    <option value="Bulky">Bulky Items</option>
+                                </select>
+                                <span asp-validation-for="WasteType" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="Priority" class="form-label">Priority</label>
+                                <select asp-for="Priority" class="form-select">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Critical">Critical</option>
+                                </select>
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="EstimatedVolume" class="form-label">Estimated Volume (cubic meters)</label>
+                                <input asp-for="EstimatedVolume" class="form-control" step="0.1" min="0" placeholder="2.5">
+                                <span asp-validation-for="EstimatedVolume" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ImageUrl" class="form-label">Image URL (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <div class="form-text">You can upload images to services like Imgur or use any public image URL</div>
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <!-- Quick Location Buttons -->
+                        <div class="mb-3">
+                            <label class="form-label">Quick Locations:</label>
+                            <div class="btn-group-vertical d-block" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="setLocation('Downtown Main Street', 4.6097, -74.0817)">
+                                    <i class="bi bi-building"></i> Downtown Main Street
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="setLocation('Park Avenue Commercial District', 4.6351, -74.0703)">
+                                    <i class="bi bi-shop"></i> Park Avenue Commercial District
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="setLocation('Residential Zone 5th Street', 4.6234, -74.0845)">
+                                    <i class="bi bi-house"></i> Residential Zone 5th Street
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Reward:</strong> You'll earn 10 Eco-Credits for submitting this report!
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-send"></i> Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setLocation(location, lat, lng) {
+        document.getElementById('Location').value = location;
+        document.getElementById('Latitude').value = lat;
+        document.getElementById('Longitude').value = lng;
+    }
+
+    // Simple form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const location = document.getElementById('Location').value;
+        if (!location.trim()) {
+            e.preventDefault();
+            alert('Please enter a location for your waste report.');
+            return;
+        }
+    });
+</script>
